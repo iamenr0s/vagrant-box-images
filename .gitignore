@@ -1,0 +1,7 @@
+# Ignore build artifacts
+output/
+*.box
+
+# Ignore temporary files
+*.log
+*.tmp

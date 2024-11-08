@@ -1,0 +1,34 @@
+version: 2.1
+
+executors:
+  packer-executor:
+    docker:
+      - image: hashicorp/packer:latest
+    working_directory: ~/repo
+
+jobs:
+  packer-build:
+    executor: packer-executor
+    steps:
+      - checkout
+      - run:
+          name: Install Dependencies
+          command: |
+            sudo apt-get update
+            sudo apt-get install -y qemu-kvm libvirt-bin curl unzip
+            curl -O https://releases.hashicorp.com/packer/1.7.8/packer_1.7.8_linux_amd64.zip
+            unzip packer_1.7.8_linux_amd64.zip
+            sudo mv packer /usr/local/bin/
+      - run:
+          name: Validate Packer Template
+          command: packer validate template.json
+      - run:
+          name: Build Vagrant Box
+          command: packer build template.json
+
+workflows:
+  version: 2
+  build:
+    jobs:
+      - packer-build
+
