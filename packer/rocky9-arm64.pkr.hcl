@@ -21,78 +21,53 @@ variable "headless" {
 }
 
 variable "rocky_iso_url" {
-  type    = string
-  default = "https://download.rockylinux.org/pub/rocky/9/isos/aarch64/Rocky-aarch64-boot.iso"
+  type        = string
+  default     = "https://download.rockylinux.org/pub/rocky/9/isos/aarch64/Rocky-aarch64-boot.iso"
 }
 
 variable "rocky_sha256sum_url" {
-  type    = string
-  default = "https://download.rockylinux.org/pub/rocky/9/isos/aarch64/CHECKSUM"
+  type        = string
+  default     = "https://download.rockylinux.org/pub/rocky/9/isos/aarch64/CHECKSUM"
 }
 
 # use can use "--url" to specify the exact url for os repo
 variable "ks_os_repos" {
-  type    = string
-  default = "--url='https://download.rockylinux.org/pub/rocky/9/BaseOS/aarch64/os/'"
+  type        = string
+  default     = "--url='https://download.rockylinux.org/pub/rocky/9/BaseOS/aarch64/os/'"
 }
 
 # Use --baseurl to specify the exact url for base_os repo
 variable "ks_base_os_repos" {
-  type    = string
-  default = "--mirrorlist='http://mirrors.rockylinux.org/mirrorlist?arch=aarch64&repo=BaseOS-9'"
+  type        = string
+  default     = "--mirrorlist='http://mirrors.rockylinux.org/mirrorlist?arch=aarch64&repo=BaseOS-9'"
 }
 
 # Use --baseurl to specify the exact url for appstream repo
 variable "ks_appstream_repos" {
-  type    = string
-  default = "--mirrorlist='https://mirrors.rockylinux.org/mirrorlist?arch=aarch64&release=9&repo=AppStream-9'"
+  type        = string
+  default     = "--mirrorlist='https://mirrors.rockylinux.org/mirrorlist?arch=aarch64&release=9&repo=AppStream-9'"
 }
 
 # Use --baseurl to specify the exact url for extras repo
 variable "ks_extras_repos" {
-  type    = string
-  default = "--mirrorlist='https://mirrors.rockylinux.org/mirrorlist?arch=aarch64&repo=extras-9'"
+  type        = string
+  default     = "--mirrorlist='https://mirrors.rockylinux.org/mirrorlist?arch=aarch64&repo=extras-9'"
 }
 
 variable ks_proxy {
-  type    = string
-  default = "${env("KS_PROXY")}"
+  type        = string
+  default     = "${env("KS_PROXY")}"
 }
 
 variable ks_mirror {
-  type    = string
-  default = "${env("KS_MIRROR")}"
+  type        = string
+  default     = "${env("KS_MIRROR")}"
 }
 
 variable "timeout" {
   type        = string
   default     = "2h"
   description = "Timeout for building the image"
-}
-
-locals {
-  ks_proxy           = var.ks_proxy != "" ? "--proxy=${var.ks_proxy}" : ""
-  ks_os_repos        = var.ks_mirror != "" ? "--url=${var.ks_mirror}/BaseOS/aarch64/os" : var.ks_os_repos
-  ks_base_os_repos   = var.ks_mirror != "" ? "--url=${var.ks_mirror}/BaseOS/aarch64/os" : var.ks_base_os_repos
-  ks_appstream_repos = var.ks_mirror != "" ? "--baseurl=${var.ks_mirror}/AppStream/aarch64/os" : var.ks_appstream_repos
-  ks_extras_repos    = var.ks_mirror != "" ? "--baseurl=${var.ks_mirror}/extras/aarch64/os" : var.ks_extras_repos
-
-  qemu_arch = {
-    "amd64" = "x86_64"
-    "arm64" = "aarch64"
-  }
-  uefi_imp = {
-    "amd64" = "OVMF"
-    "arm64" = "AAVMF"
-  }
-  qemu_machine = {
-    "amd64" = "ubuntu,accel=kvm"
-    "arm64" = "virt"
-  }
-  qemu_cpu = {
-    "amd64" = "host"
-    "arm64" = "cortex-a57"
-  }
 }
 
 source "qemu" "rocky9" {
@@ -128,7 +103,6 @@ source "qemu" "rocky9" {
     "/rocky9-arm64.ks" = templatefile("${path.root}/http/rocky9-arm64.ks",
       {
         KS_PROXY           = local.ks_proxy,
-        KS_OS_REPOS        = local.ks_os_repos,
         KS_BASE_OS_REPOS   = local.ks_base_os_repos,
         KS_APPSTREAM_REPOS = local.ks_appstream_repos,
         KS_EXTRAS_REPOS    = local.ks_extras_repos

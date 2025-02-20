@@ -1,5 +1,4 @@
 url ${KS_OS_REPOS} ${KS_PROXY}
-url ${KS_BASE_OS_REPOS} ${KS_PROXY}
 repo --name="AppStream" ${KS_APPSTREAM_REPOS} ${KS_PROXY}
 repo --name="Extras" ${KS_EXTRAS_REPOS} ${KS_PROXY}
 
@@ -114,4 +113,3 @@ iscsi-initiator-utils
 # Remove Intel wireless firmware
 -i*-firmware
 %end
-
