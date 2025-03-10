@@ -78,8 +78,8 @@ source "qemu" "rockylinux9-arm64" {
 
 # QEMU Builders for x86_64
 source "qemu" "rockylinux9-x86_64" {
-  iso_url      = "https://download.rockylinux.org/pub/rocky/${var.rocky_version}/isos/x86_64/Rocky-${var.rocky_version}-latest-x86_64-boot.iso"
-  iso_checksum = "file:https://download.rockylinux.org/pub/rocky/${var.rocky_version}/isos/x86_64/Rocky-${var.rocky_version}-latest-x86_64-boot.iso.CHECKSUM"
+  iso_url      = "https://download.rockylinux.org/pub/rocky/${var.rocky_version}/isos/x86_64/Rocky-${var.rocky_version}-latest-x86_64-dvd.iso"
+  iso_checksum = "file:https://download.rockylinux.org/pub/rocky/${var.rocky_version}/isos/x86_64/Rocky-${var.rocky_version}-latest-x86_64-dvd.iso.CHECKSUM"
   
   disk_size         = "10G"
   output_directory  = "output/rockylinux9-x86_64"
@@ -105,7 +105,7 @@ source "qemu" "rockylinux9-x86_64" {
     "<down><down><end><wait>",
     " inst.text inst.ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/rocky9-x86_64.ks<wait>",
     " console=tty0 console=ttyS0,115200n8<wait>",
-    " rd.live.check=0<wait>",
+    " inst.repo=cdrom<wait>",
     "<f10><wait>"
   ]
   
@@ -119,8 +119,8 @@ source "qemu" "rockylinux9-x86_64" {
     "/rocky9-x86_64.ks" = templatefile("${path.root}/http/rocky9.ks",
       {
         KS_PROXY           = "",
-        KS_OS_REPOS        = "https://mirrors.rockylinux.org/mirrorlist?arch=x86_64&repo=BaseOS-9",
-        KS_APPSTREAM_REPOS = "https://mirrors.rockylinux.org/mirrorlist?arch=x86_64&release=9&repo=AppStream-9",
+        KS_OS_REPOS        = "cdrom",
+        KS_APPSTREAM_REPOS = "cdrom",
         KS_EXTRAS_REPOS    = "https://mirrors.rockylinux.org/mirrorlist?arch=x86_64&repo=extras-9"
       }
     )
