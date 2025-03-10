@@ -18,14 +18,14 @@ variable "rocky_version" {
 
 variable "headless" {
   type        = bool
-  default     = true
+  default     = false
   description = "Whether VNC viewer should not be launched."
 }
 
 # QEMU Builders
 source "qemu" "rockylinux9-amd64" {
-  iso_url      = "https://download.rockylinux.org/pub/rocky/${var.rocky_version}/isos/x86_64/Rocky-${var.rocky_version}-x86_64-minimal.iso"
-  iso_checksum = "file:https://download.rockylinux.org/pub/rocky/${var.rocky_version}/isos/x86_64/CHECKSUM"
+  iso_url      = "https://download.rockylinux.org/pub/rocky/${var.rocky_version}/isos/x86_64/Rocky-${var.rocky_version}-latest-x86_64-minimal.iso"
+  iso_checksum = "file:https://download.rockylinux.org/pub/rocky/${var.rocky_version}/isos/x86_64/Rocky-${var.rocky_version}-latest-x86_64-minimal.iso.CHECKSUM"
   
   disk_size    = "10G"
   output_directory = "output/rockylinux9-amd64"
@@ -35,12 +35,12 @@ source "qemu" "rockylinux9-amd64" {
   headless     = var.headless
   
   # QEMU Configuration
-  qemuargs = [
-    ["-m", "2048M"],
-    ["-smp", "2"],
-    ["-machine", "q35"],
-    ["-cpu", "host"]
-  ]
+  #qemuargs = [
+  #  ["-m", "2048M"],
+  #  ["-smp", "2"],
+  #  ["-machine", "q35"],
+  #  ["-cpu", "host"]
+  #]
   
   # Boot Configuration
   boot_wait = "5s"
@@ -58,7 +58,7 @@ source "qemu" "rockylinux9-amd64" {
   ssh_timeout      = "30m"
   shutdown_command = "echo 'packer' | sudo -S shutdown -P now"
   
-  http_directory   = "http"
+  #http_directory   = "http"
   http_content = {
     "/rocky9.ks" = templatefile("${path.root}/http/rocky9.ks",
       {
@@ -72,8 +72,8 @@ source "qemu" "rockylinux9-amd64" {
 }
 
 source "qemu" "rockylinux9-arm64" {
-  iso_url      = "https://download.rockylinux.org/pub/rocky/${var.rocky_version}/isos/aarch64/Rocky-${var.rocky_version}-aarch64-minimal.iso"
-  iso_checksum = "file:https://download.rockylinux.org/pub/rocky/${var.rocky_version}/isos/aarch64/CHECKSUM"
+  iso_url      = "https://download.rockylinux.org/pub/rocky/${var.rocky_version}/isos/aarch64/Rocky-${var.rocky_version}-latest-aarch64-boot.iso"
+  iso_checksum = "file:https://download.rockylinux.org/pub/rocky/${var.rocky_version}/isos/aarch64/Rocky-${var.rocky_version}-latest-aarch64-boot.iso.CHECKSUM"
   
   disk_size    = "10G"
   output_directory = "output/rockylinux9-arm64"
@@ -83,16 +83,19 @@ source "qemu" "rockylinux9-arm64" {
   headless     = var.headless
 
   # QEMU Configuration
-  qemuarch     = "aarch64"
-  qemuargs = [
-    ["-m", "2048M"],
-    ["-smp", "2"],
-    ["-machine", "virt"],
-    ["-cpu", "cortex-a72"],
-    ["-drive", "file=output/rockylinux9-arm64/rockylinux9-arm64.qcow2,if=none,id=drive0,cache=writeback,discard=ignore,format=qcow2"],
-    ["-device", "virtio-blk-pci,drive=drive0,bootindex=0"]
+  qemu_binary    = "qemu-system-aarch64"
+  qemuargs       = [
+    ["-serial", "stdio"], 
+    ["-bios", "/usr/share/qemu-efi-aarch64/QEMU_EFI.fd"],
+    ["-boot", "strict=off"],
+    ["-machine", "type=virt"],
+    ["-device", "qemu-xhci"],
+    ["-device", "usb-kbd"],
+    ["-device", "usb-mouse"],
+    ["-cpu", "cortex-a57"],
+    ["-device", "virtio-gpu-pci"],
   ]
-  
+
   # Boot Configuration
   boot_wait = "10s"
   boot_command = [
@@ -109,7 +112,7 @@ source "qemu" "rockylinux9-arm64" {
   ssh_timeout      = "30m"
   shutdown_command = "echo 'packer' | sudo -S shutdown -P now"
   
-  http_directory   = "http"
+  #http_directory   = "http"
   http_content = {
     "/rocky9.ks" = templatefile("${path.root}/http/rocky9.ks",
       {
