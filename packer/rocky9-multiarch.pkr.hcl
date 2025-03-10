@@ -91,17 +91,19 @@ source "qemu" "rockylinux9-x86_64" {
   # QEMU Configuration for x86_64
   qemuargs = [
     ["-m", "2048M"],
-    ["-smp", "2"]
+    ["-smp", "2"],
+    ["-cpu", "host"],
+    ["-boot", "strict=off"]
   ]
 
   # Boot Configuration
   boot_wait = "10s"
   boot_command = [
-    "<up><wait>",
-    "e<wait>",
-    "<down><down><end><wait>",
+    "<tab><wait>",
     " inst.text inst.ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/rocky9-x86_64.ks<wait>",
-    "<F10>"
+    " console=ttyS0<wait>",
+    " inst.cmdline<wait>",
+    "<enter><wait>"
   ]
   
   # SSH Configuration
