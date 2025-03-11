@@ -13,7 +13,7 @@ packer {
 
 variable "almalinux_version" {
   type    = string
-  default = "9.3"
+  default = "9"
 }
 
 variable "iso_url_x86_64" {
@@ -185,7 +185,7 @@ build {
   }
 
   post-processor "vagrant" {
-    output = "almalinux-${var.almalinux_version}-{{ .Provider }}-{{ .BuildName }}.box"
+    output = "output/almalinux-${var.almalinux_version}-{{ .Provider }}-{{ .BuildName }}.box"
     compression_level = 9
     keep_input_artifact = true
   }
