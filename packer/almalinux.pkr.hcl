@@ -119,8 +119,15 @@ source "qemu" "almalinux_aarch64" {
   net_device        = "virtio-net"
   disk_interface    = "virtio"
   boot_wait         = "10s"
-  boot_command      = [
-    "<tab> inst.text inst.ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/ks.cfg<enter><wait>"
+  #boot_command      = [
+  #  "<tab> inst.text inst.ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/ks.cfg<enter><wait>"
+  #]
+  boot_command = [
+    "<up><wait>",
+    "e<wait>",
+    "<down><down><end><wait>",
+    " inst.text inst.ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/ks.cfg<wait>",
+    "<F10>"
   ]
   cpus              = var.cpus
   memory            = var.memory
@@ -128,14 +135,15 @@ source "qemu" "almalinux_aarch64" {
   qemu_binary       = "qemu-system-aarch64"
   machine_type      = "virt"
   qemuargs          = [
-    ["-cpu", "cortex-a72"],
-    ["-machine", "virt"],
-    ["-device", "virtio-net-device,netdev=user.0"],
-    ["-netdev", "user,id=user.0"],
-    ["-drive", "if=none,file=${var.iso_url_aarch64},id=cdrom,media=cdrom"],
-    ["-device", "virtio-scsi-device"],
-    ["-device", "scsi-cd,drive=cdrom"],
-    ["-bios", "/usr/share/qemu-efi-aarch64/QEMU_EFI.fd"]
+    ["-serial", "stdio"],
+    ["-bios", "/usr/share/qemu-efi-aarch64/QEMU_EFI.fd"],
+    ["-boot", "strict=off"],
+    ["-machine", "type=virt"],
+    ["-device", "qemu-xhci"],
+    ["-device", "usb-kbd"],
+    ["-device", "usb-mouse"],
+    ["-cpu", "cortex-a57"],
+    ["-device", "virtio-gpu-pci"],
   ]
 }
 
