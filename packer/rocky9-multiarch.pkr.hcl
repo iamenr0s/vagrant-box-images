@@ -85,16 +85,19 @@ source "qemu" "rockylinux9-x86_64" {
   output_directory  = "output/rockylinux9-x86_64"
   vm_name           = "rockylinux9-x86_64.qcow2"
   format            = "qcow2"
-  accelerator       = "kvm"
+  accelerator       = "tcg"  # Changed from kvm to tcg
   headless          = var.headless
 
   # QEMU Configuration for x86_64
   qemuargs = [
     ["-m", "2048M"],
     ["-smp", "2"],
-    ["-cpu", "host"],
+    ["-cpu", "max"],  # Changed from host to max
     ["-boot", "strict=off"],
-    ["-serial", "stdio"]
+    ["-serial", "stdio"],
+    ["-machine", "type=q35,accel=tcg"],  # Added machine type
+    ["-device", "virtio-net-pci,netdev=user.0"],
+    ["-netdev", "user,id=user.0"]
   ]
 
   # Boot Configuration
@@ -103,9 +106,10 @@ source "qemu" "rockylinux9-x86_64" {
     "<up><wait>",
     "e<wait>",
     "<down><down><end><wait>",
-    " inst.text inst.ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/rocky9-x86_64.ks<wait>",
+    " inst.text inst.ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/rocky9.ks<wait>",
     " console=tty0 console=ttyS0,115200n8<wait>",
     " inst.repo=cdrom<wait>",
+    " rd.driver.blacklist=nouveau<wait>",
     "<f10><wait>"
   ]
   
