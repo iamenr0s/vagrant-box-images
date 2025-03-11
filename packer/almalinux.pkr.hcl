@@ -83,14 +83,20 @@ source "qemu" "almalinux_x86_64" {
   ssh_username      = var.ssh_username
   ssh_password      = var.ssh_password
   ssh_timeout       = var.ssh_timeout
-
+  
+  # Adding qemuargs to fix kernel panic
+  qemuargs          = [
+    ["-m", "${var.memory}M"],
+    ["-smp", "${var.cpus}"],
+    ["-cpu", "host"]
+  ]
   
   vm_name           = "almalinux-${var.almalinux_version}-x86_64.qcow2"
   net_device        = "virtio-net"
   disk_interface    = "virtio"
   boot_wait         = "10s"
   boot_command      = [
-    "<tab> inst.text inst.ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/ks.cfg<enter><wait>"
+    "<tab> inst.text inst.ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/ks.cfg console=ttyS0 net.ifnames=0 biosdevname=0 crashkernel=auto<enter><wait>"
   ]
   cpus              = var.cpus
   memory            = var.memory
