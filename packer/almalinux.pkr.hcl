@@ -110,7 +110,7 @@ source "qemu" "almalinux_aarch64" {
   shutdown_command  = "echo 'vagrant' | sudo -S /sbin/shutdown -h now"
   disk_size         = var.disk_size
   format            = "qcow2"
-  accelerator       = "tcg"  // Changed from "kvm" to "tcg"
+  accelerator       = "tcg"
   http_directory    = "http"
   ssh_username      = var.ssh_username
   ssh_password      = var.ssh_password
@@ -129,7 +129,7 @@ source "qemu" "almalinux_aarch64" {
   machine_type      = "virt"
   qemuargs          = [
     ["-cpu", "cortex-a57"],
-    ["-bios", "C:/Program Files/qemu/share/edk2-aarch64-code.fd"]
+    ["-bios", "/usr/share/qemu-efi-aarch64/QEMU_EFI.fd"]
   ]
 }
 
