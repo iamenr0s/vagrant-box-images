@@ -18,22 +18,22 @@ variable "almalinux_version" {
 
 variable "iso_url_x86_64" {
   type    = string
-  default = "https://repo.almalinux.org/almalinux/9/isos/x86_64/AlmaLinux-9.3-x86_64-boot.iso"
+  default = "https://repo.almalinux.org/almalinux/9/isos/x86_64/AlmaLinux-9-latest-x86_64-boot.iso"
 }
 
 variable "iso_checksum_x86_64" {
   type    = string
-  default = "sha256:af3f19fa553d3f2134a15b9ac1a8d4c68b4e9a5a3e1e7a8c5f9c2125d01f0c9b"
+  default = "sha256:3038fb71a29d33c3c93117bd8f4c3f612cb152dce057c666b6b11dfa793fb65c"
 }
 
 variable "iso_url_aarch64" {
   type    = string
-  default = "https://repo.almalinux.org/almalinux/9/isos/aarch64/AlmaLinux-9.3-aarch64-boot.iso"
+  default = "https://repo.almalinux.org/almalinux/9/isos/aarch64/AlmaLinux-9-latest-aarch64-boot.iso"
 }
 
 variable "iso_checksum_aarch64" {
   type    = string
-  default = "sha256:c5a7e1b3a7ead8d3d7f7e6a5a1a0a1e5a6a1a3a1a7a5a3a1a3a5a7a9a1a3a5a7"
+  default = "sha256:bcb053044ebfa2005d732825f4929626edb4c0802ca43b02140b15f00796ea81"
 }
 
 variable "cpus" {
