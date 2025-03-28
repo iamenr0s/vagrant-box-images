@@ -116,18 +116,18 @@ source "qemu" "almalinux_aarch64" {
   ssh_password      = var.ssh_password
   ssh_timeout       = var.ssh_timeout
   vm_name           = "almalinux-${var.almalinux_version}-aarch64.qcow2"
-  net_device        = "virtio-net"
-  disk_interface    = "virtio"
-  boot_wait         = "30s"
+  disk_interface    = "virtio-scsi"  // Changed from "virtio" to "virtio-scsi"
+  boot_wait         = "40s"
   
-  # Simplified boot command for ARM64
+  # Modified boot command with more wait time
   boot_command      = [
-    "c<wait>",
-    "linux /images/pxeboot/vmlinuz inst.stage2=hd:LABEL=AlmaLinux-9-latest-aarch64-dvd inst.text inst.ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/ks.cfg console=ttyAMA0<wait>",
-    "<enter><wait>",
-    "initrd /images/pxeboot/initrd.img<wait>",
-    "<enter><wait>",
-    "boot<wait>"
+    "<wait40s>",
+    "c<wait5s>",
+    "linux /images/pxeboot/vmlinuz inst.stage2=hd:LABEL=AlmaLinux-9-latest-aarch64-dvd inst.text inst.ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/ks.cfg ip=dhcp console=ttyAMA0<wait5s>",
+    "<enter><wait10s>",
+    "initrd /images/pxeboot/initrd.img<wait5s>",
+    "<enter><wait10s>",
+    "boot<wait10s>"
   ]
   
   cpus              = var.cpus
@@ -138,13 +138,16 @@ source "qemu" "almalinux_aarch64" {
   qemuargs          = [
     ["-m", "${var.memory}M"],
     ["-smp", "${var.cpus}"],
-    ["-serial", "stdio"],
+    ["-nographic"],
+    ["-serial", "mon:stdio"],
+    ["-device", "virtio-scsi-pci,id=scsi0"],
+    ["-device", "scsi-hd,bus=scsi0.0,drive=drive0"],
+    ["-drive", "if=none,file=output-almalinux-${var.almalinux_version}-aarch64/almalinux-${var.almalinux_version}-aarch64.qcow2,id=drive0,cache=writeback,discard=ignore,format=qcow2"],
     ["-device", "virtio-net-pci,netdev=user.0"],
     ["-netdev", "user,id=user.0"],
     ["-bios", "/usr/share/qemu-efi-aarch64/QEMU_EFI.fd"],
-    ["-cpu", "cortex-a57"],
-    ["-machine", "virt"],
-    ["-device", "virtio-gpu-pci"]
+    ["-cpu", "max"],
+    ["-machine", "virt"]
   ]
 }
 
