@@ -120,25 +120,33 @@ source "qemu" "almalinux_aarch64" {
   boot_wait         = "5s"
   
   # Simplified boot command
-  boot_command      = [
-    "<wait><enter><wait10s>",
-    "<tab><wait>",
-    " inst.text inst.ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/ks.cfg console=ttyAMA0<enter>"
+  boot_command = [
+    "<up><wait>",
+    "e<wait>",
+    "<down><down><end><wait>",
+    " inst.text inst.ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/rocky9.ks<wait>",
+    "<F10>"
   ]
   
   cpus              = var.cpus
   memory            = var.memory
   headless          = var.headless
-  qemu_binary       = "/usr/bin/qemu-system-aarch64"
+  qemu_binary       = "qemu-system-aarch64"
   machine_type      = "virt"
   qemuargs          = [
-    ["-m", "${var.memory}M"],
-    ["-smp", "${var.cpus}"],
-    ["-machine", "virt"],
+    ["-serial", "stdio"],
+    ["-bios", "/usr/share/qemu-efi-aarch64/QEMU_EFI.fd"],
+    ["-boot", "strict=off"],
+    ["-machine", "type=virt"],
+    ["-device", "qemu-xhci"],
+    ["-device", "usb-kbd"],
+    ["-device", "usb-mouse"],
     ["-cpu", "cortex-a57"],
-    ["-bios", "/usr/share/qemu-efi-aarch64/QEMU_EFI.fd"]
+    ["-device", "virtio-gpu-pci"]
   ]
 }
+
+
 
 build {
   name = "almalinux"
