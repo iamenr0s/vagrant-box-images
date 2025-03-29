@@ -129,7 +129,7 @@ source "qemu" "almalinux_aarch64" {
   cpus              = var.cpus
   memory            = var.memory
   headless          = var.headless
-  qemu_binary       = "qemu-system-aarch64"
+  qemu_binary       = "/usr/bin/qemu-system-aarch64"
   machine_type      = "virt"
   qemuargs          = [
     ["-m", "${var.memory}M"],
