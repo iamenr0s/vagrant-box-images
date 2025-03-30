@@ -119,19 +119,19 @@ source "qemu" "almalinux_aarch64" {
   disk_interface    = "virtio"
   boot_wait         = "5s"
   
-  # Simplified boot command
+  # Fixed boot command to use the correct kickstart file
   boot_command = [
     "<up><wait>",
     "e<wait>",
     "<down><down><end><wait>",
-    " inst.text inst.ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/rocky9.ks<wait>",
+    " inst.text inst.ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/ks.cfg console=ttyAMA0<wait>",
     "<F10>"
   ]
   
   cpus              = var.cpus
   memory            = var.memory
   headless          = var.headless
-  qemu_binary       = "qemu-system-aarch64"
+  qemu_binary       = "/usr/bin/qemu-system-aarch64"
   machine_type      = "virt"
   qemuargs          = [
     ["-serial", "stdio"],
@@ -145,8 +145,6 @@ source "qemu" "almalinux_aarch64" {
     ["-device", "virtio-gpu-pci"]
   ]
 }
-
-
 
 build {
   name = "almalinux"
