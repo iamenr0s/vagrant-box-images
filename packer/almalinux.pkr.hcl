@@ -117,32 +117,28 @@ source "qemu" "almalinux_aarch64" {
   ssh_timeout       = var.ssh_timeout
   vm_name           = "almalinux-${var.almalinux_version}-aarch64.qcow2"
   disk_interface    = "virtio"
-  boot_wait         = "5s"
+  boot_wait         = "40s"
   
-  # Fixed boot command to use the correct kickstart file
+  # Simplified boot command with longer waits
   boot_command = [
-    "<up><wait>",
-    "e<wait>",
-    "<down><down><end><wait>",
-    " inst.text inst.ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/ks.cfg console=ttyAMA0<wait>",
-    "<F10>"
+    "<wait40s>",
+    "<tab><wait>",
+    " inst.text inst.ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/ks.cfg console=ttyAMA0<enter><wait>"
   ]
   
   cpus              = var.cpus
   memory            = var.memory
-  headless          = var.headless
+  headless          = false
   qemu_binary       = "/usr/bin/qemu-system-aarch64"
   machine_type      = "virt"
   qemuargs          = [
-    ["-serial", "stdio"],
+    ["-m", "${var.memory}M"],
+    ["-smp", "${var.cpus}"],
+    ["-nographic"],
+    ["-serial", "mon:stdio"],
     ["-bios", "/usr/share/qemu-efi-aarch64/QEMU_EFI.fd"],
-    ["-boot", "strict=off"],
-    ["-machine", "type=virt"],
-    ["-device", "qemu-xhci"],
-    ["-device", "usb-kbd"],
-    ["-device", "usb-mouse"],
     ["-cpu", "cortex-a57"],
-    ["-device", "virtio-gpu-pci"]
+    ["-machine", "virt"]
   ]
 }
 
