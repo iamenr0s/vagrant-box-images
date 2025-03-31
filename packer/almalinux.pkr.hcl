@@ -129,13 +129,16 @@ source "qemu" "almalinux_aarch64" {
   cpus              = var.cpus
   memory            = var.memory
   headless          = false
-  qemu_binary       = "/usr/bin/qemu-system-aarch64"
+  qemu_binary       = "qemu-system-aarch64"
   machine_type      = "virt"
   qemuargs          = [
     ["-m", "${var.memory}M"],
     ["-smp", "${var.cpus}"],
     ["-nographic"],
     ["-serial", "mon:stdio"],
+    ["-drive", "file=${var.iso_url_aarch64},format=raw,if=none,id=cdrom"],
+    ["-device", "virtio-scsi-pci"],
+    ["-device", "scsi-cd,drive=cdrom"],
     ["-bios", "/usr/share/qemu-efi-aarch64/QEMU_EFI.fd"],
     ["-cpu", "cortex-a57"],
     ["-machine", "virt"]
