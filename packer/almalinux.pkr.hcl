@@ -119,13 +119,15 @@ source "qemu" "almalinux_aarch64" {
   disk_interface    = "virtio"
   boot_wait         = "60s"
   
-  # Try a different boot command approach
+  # Simplified boot command
   boot_command = [
     "<wait60s>",
-    "e<wait>",
-    "<down><down><end><wait>",
-    " inst.text inst.ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/ks.cfg console=ttyAMA0 ip=dhcp<wait>",
-    "<f10><wait>"
+    "c<wait>",
+    "linux /images/pxeboot/vmlinuz inst.stage2=hd:LABEL=AlmaLinux-9-latest-aarch64-dvd inst.text inst.ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/ks.cfg console=ttyAMA0 ip=dhcp<wait>",
+    "<enter><wait10s>",
+    "initrd /images/pxeboot/initrd.img<wait>",
+    "<enter><wait10s>",
+    "boot<wait>"
   ]
   
   cpus              = var.cpus
@@ -136,12 +138,16 @@ source "qemu" "almalinux_aarch64" {
   qemuargs          = [
     ["-m", "${var.memory}M"],
     ["-smp", "${var.cpus}"],
-    ["-drive", "file=${var.iso_url_aarch64},format=raw,if=virtio,media=cdrom"],
-    ["-machine", "virt,gic-version=max"],
-    ["-cpu", "max"],
+    ["-drive", "file=${var.iso_url_aarch64},format=raw,if=none,id=cdrom"],
+    ["-device", "virtio-scsi-pci"],
+    ["-device", "scsi-cd,drive=cdrom"],
+    ["-machine", "virt"],
+    ["-cpu", "cortex-a57"],
     ["-device", "virtio-net-pci,netdev=user.0"],
     ["-netdev", "user,id=user.0"],
-    ["-bios", "/usr/share/qemu-efi-aarch64/QEMU_EFI.fd"]
+    ["-bios", "/usr/share/qemu-efi-aarch64/QEMU_EFI.fd"],
+    ["-nographic"],
+    ["-serial", "mon:stdio"]
   ]
 }
 
