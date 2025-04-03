@@ -117,31 +117,31 @@ source "qemu" "almalinux_aarch64" {
   ssh_timeout       = var.ssh_timeout
   vm_name           = "almalinux-${var.almalinux_version}-aarch64.qcow2"
   disk_interface    = "virtio"
-  boot_wait         = "40s"
+  boot_wait         = "60s"
   
-  # Simplified boot command with longer waits
+  # Try a different boot command approach
   boot_command = [
-    "<wait40s>",
-    "<tab><wait>",
-    " inst.text inst.ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/ks.cfg console=ttyAMA0<enter><wait>"
+    "<wait60s>",
+    "e<wait>",
+    "<down><down><end><wait>",
+    " inst.text inst.ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/ks.cfg console=ttyAMA0 ip=dhcp<wait>",
+    "<f10><wait>"
   ]
   
   cpus              = var.cpus
   memory            = var.memory
-  headless          = false
+  headless          = true
   qemu_binary       = "qemu-system-aarch64"
   machine_type      = "virt"
   qemuargs          = [
     ["-m", "${var.memory}M"],
     ["-smp", "${var.cpus}"],
-    ["-nographic"],
-    ["-serial", "mon:stdio"],
-    ["-drive", "file=${var.iso_url_aarch64},format=raw,if=none,id=cdrom"],
-    ["-device", "virtio-scsi-pci"],
-    ["-device", "scsi-cd,drive=cdrom"],
-    ["-bios", "/usr/share/qemu-efi-aarch64/QEMU_EFI.fd"],
-    ["-cpu", "cortex-a57"],
-    ["-machine", "virt"]
+    ["-drive", "file=${var.iso_url_aarch64},format=raw,if=virtio,media=cdrom"],
+    ["-machine", "virt,gic-version=max"],
+    ["-cpu", "max"],
+    ["-device", "virtio-net-pci,netdev=user.0"],
+    ["-netdev", "user,id=user.0"],
+    ["-bios", "/usr/share/qemu-efi-aarch64/QEMU_EFI.fd"]
   ]
 }
 
