@@ -53,7 +53,7 @@ variable "disk_size" {
 
 variable "headless" {
   type    = bool
-  default = true
+  default = false
 }
 
 variable "ssh_username" {
@@ -130,7 +130,7 @@ source "qemu" "almalinux_aarch64" {
   
   cpus              = var.cpus
   memory            = var.memory
-  headless          = true
+  headless          = var.headless
   qemu_binary       = "qemu-system-aarch64"
   machine_type      = "virt"
   qemuargs          = [
