@@ -119,15 +119,12 @@ source "qemu" "almalinux_aarch64" {
   disk_interface    = "virtio"
   boot_wait         = "60s"
   
-  # Simplified boot command
+  # Updated boot command to handle the installation prompt
   boot_command = [
     "<wait60s>",
-    "c<wait>",
-    "linux /images/pxeboot/vmlinuz inst.stage2=hd:LABEL=AlmaLinux-9-latest-aarch64-dvd inst.text inst.ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/ks.cfg console=ttyAMA0 ip=dhcp<wait>",
-    "<enter><wait10s>",
-    "initrd /images/pxeboot/initrd.img<wait>",
-    "<enter><wait10s>",
-    "boot<wait>"
+    "<enter><wait10s>",  # Press enter to begin installation
+    "<tab><wait>",       # Navigate to boot options
+    " inst.text inst.ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/ks.cfg console=ttyAMA0 ip=dhcp<enter><wait>"
   ]
   
   cpus              = var.cpus
