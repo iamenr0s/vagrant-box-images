@@ -119,17 +119,16 @@ source "qemu" "almalinux_aarch64" {
   disk_interface    = "virtio"
   boot_wait         = "60s"
   
-  # Updated boot command to handle the installation prompt
+  # Simplified boot command with longer waits
   boot_command = [
     "<wait60s>",
-    "<enter><wait10s>",  # Press enter to begin installation
-    "<tab><wait>",       # Navigate to boot options
-    " inst.text inst.ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/ks.cfg console=ttyAMA0 ip=dhcp<enter><wait>"
+    "<enter><wait5s>",
+    "<enter><wait5s>"
   ]
   
   cpus              = var.cpus
   memory            = var.memory
-  headless          = var.headless
+  headless          = false
   qemu_binary       = "qemu-system-aarch64"
   machine_type      = "virt"
   qemuargs          = [
@@ -143,8 +142,10 @@ source "qemu" "almalinux_aarch64" {
     ["-device", "virtio-net-pci,netdev=user.0"],
     ["-netdev", "user,id=user.0"],
     ["-bios", "/usr/share/qemu-efi-aarch64/QEMU_EFI.fd"],
-    ["-nographic"],
-    ["-serial", "mon:stdio"]
+    ["-device", "virtio-gpu-pci"],
+    ["-device", "usb-ehci"],
+    ["-device", "usb-kbd"],
+    ["-device", "usb-mouse"]
   ]
 }
 
