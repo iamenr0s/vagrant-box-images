@@ -2,10 +2,10 @@
 
 # Fedora builds
 build-fedora-x86_64:
-	packer build -var-file=config/common.pkrvars.hcl -var-file=config/x86_64.pkrvars.hcl templates/fedora/fedora-36-x86_64.pkr.hcl
+	packer build -var-file=config/common.pkrvars.hcl -var-file=config/x86_64.pkrvars.hcl templates/fedora/fedora-39-x86_64.pkr.hcl
 
 build-fedora-arm64:
-	packer build -var-file=config/common.pkrvars.hcl -var-file=config/arm64.pkrvars.hcl templates/fedora/fedora-36-arm64.pkr.hcl
+	packer build -var-file=config/common.pkrvars.hcl -var-file=config/arm64.pkrvars.hcl templates/fedora/fedora-39-arm64.pkr.hcl
 
 # Ubuntu builds
 build-ubuntu-x86_64:
@@ -32,6 +32,6 @@ build-all: build-all-x86_64 build-all-arm64
 
 # Clean output directories
 clean:
-	rm -rf output/
+	rmdir /s /q output 2>nul || echo "Output directory already clean"
 
 .PHONY: build-fedora-x86_64 build-fedora-arm64 build-ubuntu-x86_64 build-ubuntu-arm64 build-rocky-x86_64 build-rocky-arm64 build-all-x86_64 build-all-arm64 build-all clean

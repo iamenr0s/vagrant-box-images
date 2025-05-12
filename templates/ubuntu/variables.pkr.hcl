@@ -22,7 +22,7 @@ variable "headless" {
 
 variable "iso_url_x86_64" {
   type    = string
-  default = "https://releases.ubuntu.com/22.04/ubuntu-22.04.3-live-server-amd64.iso"
+  default = "https://releases.ubuntu.com/22.04.3/ubuntu-22.04.3-live-server-amd64.iso"
 }
 
 variable "iso_checksum_x86_64" {
@@ -32,7 +32,7 @@ variable "iso_checksum_x86_64" {
 
 variable "iso_url_arm64" {
   type    = string
-  default = "https://cdimage.ubuntu.com/releases/22.04/release/ubuntu-22.04.3-live-server-arm64.iso"
+  default = "https://cdimage.ubuntu.com/releases/22.04.3/release/ubuntu-22.04.3-live-server-arm64.iso"
 }
 
 variable "iso_checksum_arm64" {
