@@ -20,14 +20,24 @@ variable "headless" {
   default = true
 }
 
-variable "iso_url" {
+variable "iso_url_x86_64" {
   type    = string
-  default = "https://download.fedoraproject.org/pub/fedora/linux/releases/36/Server/x86_64/iso/Fedora-Server-dvd-x86_64-36.iso"
+  default = "https://download.fedoraproject.org/pub/fedora/linux/releases/39/Server/x86_64/iso/Fedora-Server-dvd-x86_64-39-1.5.iso"
 }
 
-variable "iso_checksum" {
+variable "iso_checksum_x86_64" {
   type    = string
-  default = "sha256:5edaf708a52687b09f9810c2b6d2a3432edae923aaf62f7d6e926637c7474295"
+  default = "sha256:2755cdff6ac6365c75be60334bf1935ade838fc18de53d4c640a13d3e904f6e9"
+}
+
+variable "iso_url_arm64" {
+  type    = string
+  default = "https://download.fedoraproject.org/pub/fedora/linux/releases/39/Server/aarch64/iso/Fedora-Server-dvd-aarch64-39-1.5.iso"
+}
+
+variable "iso_checksum_arm64" {
+  type    = string
+  default = "sha256:c2a7c43c3f6c6519faa48b62a50b06e3a9f5291d9c3b15e9c4c5f5a1fc5c97f7"
 }
 
 variable "arch" {
