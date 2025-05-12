@@ -1,0 +1,84 @@
+// Fedora 39 Packer template
+
+// Include common variables
+variable "distribution" {
+  type    = string
+  default = "fedora"
+}
+
+variable "version" {
+  type    = string
+  default = "39"
+}
+
+variable "architecture" {
+  type    = string
+  description = "Architecture to build (x86_64 or arm64)"
+}
+
+variable "iso_url" {
+  type    = string
+  description = "URL to the ISO image"
+}
+
+variable "iso_checksum" {
+  type    = string
+  description = "Checksum of the ISO image"
+}
+
+variable "http_directory" {
+  type    = string
+  description = "Directory for HTTP server files"
+}
+
+variable "boot_command" {
+  type    = list(string)
+  description = "Commands to type during boot"
+}
+
+variable "qemu_binary" {
+  type    = string
+  description = "Path to QEMU binary"
+}
+
+// Include common builders
+source "qemu" "fedora39" {
+  iso_url          = var.iso_url
+  iso_checksum     = var.iso_checksum
+  http_directory   = var.http_directory
+  boot_command     = var.boot_command
+  qemu_binary      = var.qemu_binary
+}
+
+build {
+  name = "fedora39-${var.architecture}"
+  
+  sources = ["source.qemu.fedora39"]
+  
+  // Update system
+  provisioner "shell" {
+    scripts = [
+      "${path.root}/../../../common/scripts/update.sh",
+      "${path.root}/scripts/setup.sh"
+    ]
+    execute_command = "echo '${var.ssh_password}' | {{.Vars}} sudo -S -E bash '{{.Path}}'"
+  }
+  
+  // Install Vagrant-specific items
+  provisioner "shell" {
+    script = "${path.root}/../../../common/scripts/setup_vagrant.sh"
+    execute_command = "echo '${var.ssh_password}' | {{.Vars}} sudo -S -E bash '{{.Path}}'"
+  }
+  
+  // Clean up
+  provisioner "shell" {
+    script = "${path.root}/../../../common/scripts/cleanup.sh"
+    execute_command = "echo '${var.ssh_password}' | {{.Vars}} sudo -S -E bash '{{.Path}}'"
+  }
+  
+  // Create Vagrant box
+  post-processor "vagrant" {
+    compression_level = 9
+    output = "${var.output_directory}/${var.distribution}${var.version}-${var.architecture}.box"
+  }
+}

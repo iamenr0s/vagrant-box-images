@@ -1,26 +1,31 @@
-# Packer KVM/QEMU Templates
+# Vagrant Box Images
 
-This repository contains Packer templates for building KVM/QEMU images for various Linux distributions. The templates support both x86_64 and arm64 architectures.
+This repository contains Packer templates to build Vagrant box images for various Linux distributions and architectures.
 
 ## Supported Distributions
 
-- Ubuntu 22.04 LTS (x86_64, arm64)
-- Rocky Linux 9 (x86_64, arm64)
+- Fedora 39 (x86_64, arm64)
+- Ubuntu (planned)
+- AlmaLinux (planned)
 
-## Prerequisites
+## Requirements
 
-- Packer >= 1.8.0
-- QEMU/KVM
-- Internet connection
+- [Packer](https://www.packer.io/) (v1.8.0+)
+- [QEMU/KVM](https://www.qemu.org/)
+- [Vagrant](https://www.vagrantup.com/)
 
-## Usage
+## Directory Structure
 
-1. Clone this repository
-2. Navigate to the desired distribution directory
-3. Run packer build command:
+- `common/`: Common scripts and configurations shared across distributions
+- `distributions/`: Distribution-specific configurations and scripts
+- `packer/`: Common Packer configuration files
 
-For x86_64:
+## Building Images
+
+### Building Fedora 39 for x86_64
+
 ```bash
-packer build -var="arch=x86_64" ubuntu/22.04/ubuntu-22.04.pkr.hcl
+cd vagrant-box-images
+packer build -var-file=distributions/fedora/fedora39/x86_64/variables.pkrvars.hcl distributions/fedora/fedora39/fedora39.pkr.hcl
 ```
 
