@@ -55,6 +55,13 @@ variable "ssh_password" {
   description = "SSH password for connecting to the VM"
 }
 
+// Add output directory variable
+variable "output_directory" {
+  type    = string
+  default = "output"
+  description = "Directory where the output artifacts will be stored"
+}
+
 // Include common builders
 source "qemu" "fedora39" {
   iso_url          = var.iso_url
