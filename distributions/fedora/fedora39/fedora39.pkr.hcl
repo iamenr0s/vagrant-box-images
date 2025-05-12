@@ -41,6 +41,20 @@ variable "qemu_binary" {
   description = "Path to QEMU binary"
 }
 
+// Add SSH username variable
+variable "ssh_username" {
+  type    = string
+  default = "vagrant"
+  description = "SSH username for connecting to the VM"
+}
+
+// Add SSH password variable
+variable "ssh_password" {
+  type    = string
+  default = "vagrant"
+  description = "SSH password for connecting to the VM"
+}
+
 // Include common builders
 source "qemu" "fedora39" {
   iso_url          = var.iso_url
@@ -48,6 +62,8 @@ source "qemu" "fedora39" {
   http_directory   = var.http_directory
   boot_command     = var.boot_command
   qemu_binary      = var.qemu_binary
+  ssh_username     = var.ssh_username
+  ssh_password     = var.ssh_password
 }
 
 build {
