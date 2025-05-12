@@ -13,20 +13,20 @@ source "qemu" "fedora-39-x86_64" {
     "<tab> inst.text inst.ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/fedora/ks.cfg<enter><wait>"
   ]
   boot_wait        = "10s"
-  disk_size        = "${var.disk_size}"
+  disk_size        = var.disk_size
   format           = "qcow2"
-  headless         = "${var.headless}"
+  headless         = var.headless
   http_directory   = "http"
-  iso_checksum     = "${var.iso_checksum_x86_64}"
-  iso_url          = "${var.iso_url_x86_64}"
-  memory           = "${var.memory}"
-  cpus             = "${var.cpu}"
+  iso_checksum     = var.iso_checksum_x86_64
+  iso_url          = var.iso_url_x86_64
+  memory           = var.memory
+  cpus             = var.cpu
   output_directory = "output/fedora/39/x86_64"
   shutdown_command = "echo 'packer' | sudo -S shutdown -P now"
-  ssh_password     = "${var.ssh_password}"
-  ssh_port         = "${var.ssh_port}"
-  ssh_timeout      = "${var.ssh_timeout}"
-  ssh_username     = "${var.ssh_username}"
+  ssh_password     = var.ssh_password
+  ssh_port         = var.ssh_port
+  ssh_timeout      = var.ssh_timeout
+  ssh_username     = var.ssh_username
   vm_name          = "fedora-39-x86_64"
 }
 
