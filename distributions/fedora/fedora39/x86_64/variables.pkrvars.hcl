@@ -7,5 +7,6 @@ http_directory = "distributions/fedora/fedora39/x86_64/http"
 qemu_binary = "qemu-system-x86_64"
 
 boot_command = [
-  "<tab> inst.text inst.ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/ks.cfg<enter><wait>"
+  "<up><tab><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+  " inst.text inst.ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/ks.cfg<enter>"
 ]
