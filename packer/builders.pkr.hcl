@@ -23,5 +23,9 @@ source "qemu" "base" {
   accelerator      = "kvm"
   format           = "qcow2"
   disk_interface   = "virtio"
+  disk_cache       = "none"
+  disk_compression = true
+  disk_discard     = "unmap"
   net_device       = "virtio-net"
+  qemuargs         = [["-m", "${var.memory}M"], ["-smp", "${var.cpus}"], ["-cpu", "host"]]  
 }

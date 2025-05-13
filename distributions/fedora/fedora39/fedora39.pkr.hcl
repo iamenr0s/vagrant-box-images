@@ -71,6 +71,7 @@ source "qemu" "fedora39" {
   qemu_binary      = var.qemu_binary
   ssh_username     = var.ssh_username
   ssh_password     = var.ssh_password
+  qemu_binary      = var.qemu_binary
 }
 
 build {
