@@ -63,7 +63,7 @@ variable "output_directory" {
 }
 
 // Include common builders
-source "qemu" "fedora39" {
+source "qemu" "fedora40" {
   iso_url          = var.iso_url
   iso_checksum     = var.iso_checksum
   http_directory   = var.http_directory
