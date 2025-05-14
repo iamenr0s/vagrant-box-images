@@ -8,7 +8,7 @@ variable "distribution" {
 
 variable "version" {
   type    = string
-  default = "39"
+  default = "40"
 }
 
 variable "architecture" {
@@ -74,9 +74,9 @@ source "qemu" "fedora39" {
 }
 
 build {
-  name = "fedora39-${var.architecture}"
+  name = "fedora40-${var.architecture}"
   
-  sources = ["source.qemu.fedora39"]
+  sources = ["source.qemu.fedora40"]
   
   // Update system
   provisioner "shell" {

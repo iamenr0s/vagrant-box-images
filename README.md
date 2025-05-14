@@ -4,7 +4,7 @@ This repository contains Packer templates to build Vagrant box images for variou
 
 ## Supported Distributions
 
-- Fedora 39 (x86_64, arm64)
+- Fedora 40 (x86_64, arm64)
 - Ubuntu (planned)
 - AlmaLinux (planned)
 
@@ -26,6 +26,6 @@ This repository contains Packer templates to build Vagrant box images for variou
 
 ```bash
 cd vagrant-box-images
-packer build -var-file=distributions/fedora/fedora39/x86_64/variables.pkrvars.hcl distributions/fedora/fedora39/fedora39.pkr.hcl
+packer build -var-file=distributions/fedora/fedora40/x86_64/variables.pkrvars.hcl distributions/fedora/fedora40/fedora40.pkr.hcl
 ```
 
