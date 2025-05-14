@@ -20,7 +20,6 @@ source "qemu" "base" {
   
   // Common QEMU settings
   qemu_binary      = var.qemu_binary
-  qemuargs         = [["-m", "${var.memory}M"], ["-smp", "${var.cpus}"], ["-cpu", "host"]] 
   accelerator      = "kvm"
   format           = "qcow2"
   disk_interface   = "virtio"
@@ -28,4 +27,7 @@ source "qemu" "base" {
   disk_compression = true
   disk_discard     = "unmap"
   net_device       = "virtio-net"
+  
+  // QEMU arguments
+  qemuargs = [["-m", "${var.memory}M"], ["-smp", "${var.cpus}"], ["-cpu", "host"]]
 }
