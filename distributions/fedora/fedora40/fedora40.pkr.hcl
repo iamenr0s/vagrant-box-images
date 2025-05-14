@@ -62,6 +62,11 @@ variable "output_directory" {
   description = "Directory where the output artifacts will be stored"
 }
 
+variable "headless" {
+  type    = string
+  default = "true"
+}
+
 // Include common builders
 source "qemu" "fedora40" {
   iso_url          = var.iso_url
