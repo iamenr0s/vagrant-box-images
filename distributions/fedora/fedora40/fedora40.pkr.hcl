@@ -103,7 +103,7 @@ locals {
     ["-smp", "${var.cpus}"],
     ["-serial", "stdio"],
     ["-bios", "/usr/share/qemu-efi-aarch64/QEMU_EFI.fd"],
-    ["-boot", "menu=on"]
+    ["-boot", "menu=on"],
     #["-boot", "strict=off"],
     ["-machine", "type=virt"],
     ["-device", "qemu-xhci"],
