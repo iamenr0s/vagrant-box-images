@@ -101,10 +101,15 @@ locals {
   qemu_args_arm64 = [
     ["-m", "${var.memory}"],
     ["-smp", "${var.cpus}"],
-    ["-cpu", "cortex-a72"],
-    ["-machine", "virt"],
-    ["-display", "none"],
-    ["-boot", "menu=on"]
+    ["-serial", "stdio"],
+    ["-bios", "/usr/share/qemu-efi-aarch64/QEMU_EFI.fd"],
+    ["-boot", "strict=off"],
+    ["-machine", "type=virt"],
+    ["-device", "qemu-xhci"],
+    ["-device", "usb-kbd"],
+    ["-device", "usb-mouse"],
+    ["-cpu", "cortex-a57"],
+    ["-device", "virtio-gpu-pci"],
   ]
   
   qemu_args = var.architecture == "x86_64" ? local.qemu_args_x86_64 : local.qemu_args_arm64
