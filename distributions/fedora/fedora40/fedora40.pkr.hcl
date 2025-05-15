@@ -88,6 +88,28 @@ variable "headless" {
   default = "true"
 }
 
+// QEMU arguments for different architectures
+locals {
+  qemu_args_x86_64 = [
+    ["-m", "${var.memory}"],
+    ["-smp", "${var.cpus}"],
+    ["-cpu", "host"],
+    ["-display", "none"],
+    ["-boot", "menu=on"]
+  ]
+  
+  qemu_args_arm64 = [
+    ["-m", "${var.memory}"],
+    ["-smp", "${var.cpus}"],
+    ["-cpu", "cortex-a72"],
+    ["-machine", "virt"],
+    ["-display", "none"],
+    ["-boot", "menu=on"]
+  ]
+  
+  qemu_args = var.architecture == "x86_64" ? local.qemu_args_x86_64 : local.qemu_args_arm64
+}
+
 // Fedora 40 QEMU builder configuration
 source "qemu" "fedora40" {
   headless         = var.headless
@@ -117,14 +139,8 @@ source "qemu" "fedora40" {
   disk_discard     = "unmap"
   net_device       = "virtio-net"
   
-  // QEMU arguments optimized for Linux host with KVM
-  qemuargs = [
-    ["-m", "${var.memory}"],
-    ["-smp", "${var.cpus}"],
-    ["-cpu", "host"],
-    ["-display", "none"],
-    ["-boot", "menu=on"]
-  ]
+  // Use architecture-specific QEMU arguments
+  qemuargs = local.qemu_args
 }
 
 build {
