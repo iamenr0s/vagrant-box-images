@@ -101,7 +101,7 @@ locals {
   qemu_args_arm64 = [
     ["-m", "${var.memory}"],
     ["-smp", "${var.cpus}"],
-    #["-serial", "stdio"],
+    ["-serial", "stdio"],
     ["-bios", "/usr/share/qemu-efi-aarch64/QEMU_EFI.fd"],
     ["-boot", "strict=off"],
     ["-machine", "type=virt"],
