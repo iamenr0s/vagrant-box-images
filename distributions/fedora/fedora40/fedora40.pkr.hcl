@@ -103,7 +103,8 @@ locals {
     ["-smp", "${var.cpus}"],
     ["-serial", "stdio"],
     ["-bios", "/usr/share/qemu-efi-aarch64/QEMU_EFI.fd"],
-    ["-boot", "strict=off"],
+    ["-boot", "menu=on"]
+    #["-boot", "strict=off"],
     ["-machine", "type=virt"],
     ["-device", "qemu-xhci"],
     ["-device", "usb-kbd"],
@@ -160,7 +161,6 @@ build {
       "${path.root}/scripts/setup.sh"
     ]
     execute_command = "echo '${var.ssh_password}' | {{.Vars}} sudo -S -E bash '{{.Path}}'"
-  }
-  
+  } 
   // Add any additional provisioners here
 }
