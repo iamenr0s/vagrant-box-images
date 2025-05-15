@@ -1,3 +1,4 @@
+
 // Common builder configurations
 
 source "qemu" "base" {
@@ -28,14 +29,12 @@ source "qemu" "base" {
   disk_discard     = "unmap"
   net_device       = "virtio-net"
   
-  // QEMU arguments - enhanced for boot issues
+  // QEMU arguments optimized for Linux host with KVM
   qemuargs = [
     ["-m", "${var.memory}"],
-    ["-smp", "cores=${var.cpus}"],
+    ["-smp", "${var.cpus}"],
     ["-cpu", "host"],
-    ["-boot", "strict=off"],
-    ["-machine", "accel=kvm"],
-    ["-device", "virtio-net,netdev=user.0"],
-    ["-netdev", "user,id=user.0"]
+    ["-display", "none"],
+    ["-boot", "menu=on"]
   ]
 }
