@@ -28,10 +28,14 @@ source "qemu" "base" {
   disk_discard     = "unmap"
   net_device       = "virtio-net"
   
-  // QEMU arguments - alternative format
+  // QEMU arguments - enhanced for boot issues
   qemuargs = [
     ["-m", "${var.memory}"],
-    ["-smp", "cpus=${var.cpus}"],
-    ["-cpu", "host"]
+    ["-smp", "cores=${var.cpus}"],
+    ["-cpu", "host"],
+    ["-boot", "strict=off"],
+    ["-machine", "accel=kvm"],
+    ["-device", "virtio-net,netdev=user.0"],
+    ["-netdev", "user,id=user.0"]
   ]
 }
