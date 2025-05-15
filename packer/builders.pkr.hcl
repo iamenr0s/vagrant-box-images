@@ -28,6 +28,10 @@ source "qemu" "base" {
   disk_discard     = "unmap"
   net_device       = "virtio-net"
   
-  // QEMU arguments
-  qemuargs = [["-m", "${var.memory}M"], ["-smp", "${var.cpus}"], ["-cpu", "host"]]
+  // QEMU arguments - alternative format
+  qemuargs = [
+    ["-m", "${var.memory}"],
+    ["-smp", "cpus=${var.cpus}"],
+    ["-cpu", "host"]
+  ]
 }
