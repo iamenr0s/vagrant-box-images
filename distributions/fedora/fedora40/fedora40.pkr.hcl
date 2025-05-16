@@ -85,7 +85,7 @@ variable "output_directory" {
 
 variable "headless" {
   type    = string
-  default = "false"
+  default = "true"
 }
 
 // QEMU arguments for different architectures
