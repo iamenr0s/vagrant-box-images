@@ -6,4 +6,4 @@ iso_checksum = "sha256:1b4f163c55aa9b35bb08f3d465534aa68899a4984b8ba8976b1e7b282
 http_directory = "distributions/fedora/fedora40/x86_64/http"
 qemu_binary = "/usr/bin/qemu-system-x86_64"
 
-boot_command =  ["<up>e", "<down><down><end>", " inst.ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/ks.cfg", "<leftCtrlOn>x<leftCtrlOff>"]
+boot_command = ["<up>e", "<down><down><end>", " inst.ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/ks.cfg", "<leftCtrlOn>x<leftCtrlOff>"]
