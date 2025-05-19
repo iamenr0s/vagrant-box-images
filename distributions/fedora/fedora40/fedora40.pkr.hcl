@@ -50,7 +50,7 @@ variable "ssh_password" {
 
 variable "ssh_timeout" {
   type    = string
-  default = "30m"
+  default = "60m"
   description = "Time to wait for SSH to become available"
 }
 
