@@ -50,7 +50,7 @@ variable "ssh_password" {
 
 variable "ssh_timeout" {
   type    = string
-  default = "60m"
+  default = "120m"
   description = "Time to wait for SSH to become available"
 }
 
@@ -64,6 +64,16 @@ variable "memory" {
   type    = string
   default = "2048"
   description = "Memory size in MB"
+}
+
+variable "arm64_cpus" {
+  type    = string
+  default = "4"  // More CPUs for ARM emulation
+}
+
+variable "arm64_memory" {
+  type    = string
+  default = "4096"  // More memory for ARM emulation
 }
 
 variable "disk_size" {
@@ -99,17 +109,19 @@ locals {
   ]
   
   qemu_args_arm64 = [
-    ["-m", "${var.memory}"],
-    ["-smp", "${var.cpus}"],
+    ["-m", "${var.arm64_memorymemory}"],
+    ["-smp", "${var.arm64_cpus}"],
     ["-serial", "stdio"],
     ["-bios", "/usr/share/qemu-efi-aarch64/QEMU_EFI.fd"],
-    ["-boot", "menu=on"],
-    #["-boot", "strict=off"],
+    #["-boot", "menu=on"],
+    ["-boot", "strict=off"],
     ["-machine", "type=virt"],
     ["-device", "qemu-xhci"],
     ["-device", "usb-kbd"],
     ["-device", "usb-mouse"],
     ["-cpu", "cortex-a57"],
+    ["-netdev", "user,id=user.0,hostfwd=tcp::{{ .SSHHostPort }}-:22"],
+    ["-device", "virtio-net-pci,netdev=user.0"],
     ["-device", "virtio-gpu-pci"],
   ]
   
