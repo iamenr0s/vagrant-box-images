@@ -120,7 +120,7 @@ source "qemu" "fedora40" {
   // Distribution-specific configurations
   iso_url          = var.iso_url
   iso_checksum     = var.iso_checksum
-  http_directory   = var.http_directory
+  // Remove http_directory parameter
   boot_command     = var.boot_command
   qemu_binary      = var.qemu_binary
   
