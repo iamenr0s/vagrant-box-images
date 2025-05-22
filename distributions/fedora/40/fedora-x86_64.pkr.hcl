@@ -27,11 +27,6 @@ variable "iso_checksum" {
   description = "Checksum of the ISO image"
 }
 
-variable "http_directory" {
-  type    = string
-  description = "Directory containing HTTP files"
-}
-
 variable "boot_command" {
   type    = list(string)
   description = "Commands to type when the VM is first booted"
