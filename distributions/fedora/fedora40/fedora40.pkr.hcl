@@ -26,6 +26,11 @@ variable "iso_checksum" {
   description = "Checksum of the ISO image"
 }
 
+variable "install_url" {
+  type        = string
+  description = "URL to the installation repository"
+}
+
 variable "http_directory" {
   type    = string
   description = "Directory containing HTTP files"
@@ -113,7 +118,6 @@ locals {
     ["-smp", "${var.arm64_cpus}"],
     ["-serial", "stdio"],
     ["-bios", "/usr/share/qemu-efi-aarch64/QEMU_EFI.fd"],
-    #["-boot", "menu=on"],
     ["-boot", "strict=off"],
     ["-machine", "type=virt"],
     ["-device", "qemu-xhci"],
@@ -126,6 +130,12 @@ locals {
   ]
   
   qemu_args = var.architecture == "x86_64" ? local.qemu_args_x86_64 : local.qemu_args_arm64
+  
+  // Define architecture-specific installation URLs
+  install_urls = {
+    "x86_64" = "https://fedora.mirrorservice.org/fedora/linux/releases/40/Server/x86_64/os/",
+    "arm64"  = "https://fedora.mirrorservice.org/fedora/linux/releases/40/Server/aarch64/os/"
+  }
 }
 
 // Fedora 40 QEMU builder configuration
@@ -136,7 +146,7 @@ source "qemu" "fedora40" {
   disk_size        = var.disk_size
   ssh_username     = var.ssh_username
   ssh_password     = var.ssh_password
-  ssh_timeout      = var.ssh_timeout
+  
   shutdown_command = "echo '${var.ssh_password}' | sudo -S shutdown -P now"
   output_directory = "${var.output_directory}/${var.distribution}/${var.version}/${var.architecture}"
   vm_name          = "${var.distribution}-${var.version}-${var.architecture}.qcow2"
@@ -159,6 +169,13 @@ source "qemu" "fedora40" {
   
   // Use architecture-specific QEMU arguments
   qemuargs = local.qemu_args
+  
+  // Use the template file for HTTP
+  http_content = {
+    "/ks.cfg" = templatefile("${path.root}/http/ks.cfg.pkrtpl.hcl", {
+      install_url = local.install_urls[var.architecture]
+    })
+  }
 }
 
 build {
@@ -176,3 +193,4 @@ build {
   } 
   // Add any additional provisioners here
 }
+
