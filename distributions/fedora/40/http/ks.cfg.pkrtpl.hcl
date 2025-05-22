@@ -35,6 +35,9 @@ openssh-server
 %addon com_redhat_kdump --disable
 %end
 
+# Disable unnecessary services
+services --disabled=kdump,tuned,firewalld
+
 %post
 # Update time
 #/usr/sbin/ntpdate -bu 0.fr.pool.ntp.org 1.fr.pool.ntp.org

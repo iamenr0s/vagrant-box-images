@@ -52,13 +52,13 @@ variable "ssh_timeout" {
 
 variable "cpus" {
   type    = string
-  default = "2"
+  default = "4"
   description = "Number of CPUs"
 }
 
 variable "memory" {
   type    = string
-  default = "2048"
+  default = "4096"
   description = "Memory size in MB"
 }
 
@@ -84,29 +84,20 @@ variable "headless" {
   default = "true"
 }
 
-// QEMU arguments for arm64
 locals {
   qemu_args_arm64 = [
     ["-m", "${var.memory}"],
     ["-smp", "${var.cpus}"],
-    ["-serial", "stdio"],
     ["-bios", "/usr/share/qemu-efi-aarch64/QEMU_EFI.fd"],
-    ["-boot", "menu=on"],
-    ["-machine", "type=virt"],
-    ["-device", "qemu-xhci"],
-    ["-device", "usb-kbd"],
-    ["-device", "usb-mouse"],
-    ["-cpu", "cortex-a57"],
+    ["-machine", "type=virt,accel=kvm"],
+    ["-cpu", "host,aarch64=on"],
     ["-netdev", "user,id=user.0,hostfwd=tcp::{{ .SSHHostPort }}-:22"],
-    ["-device", "virtio-net-pci,netdev=user.0"],
-    ["-device", "virtio-gpu-pci"]
+    ["-device", "virtio-net-pci,netdev=user.0"]
   ]
   
-  // Define installation URL
   install_url = "https://fedora.mirrorservice.org/fedora/linux/releases/40/Server/aarch64/os/"
 }
 
-// Fedora 40 QEMU builder configuration
 source "qemu" "fedora40" {
   headless         = var.headless
   memory           = var.memory
@@ -115,19 +106,13 @@ source "qemu" "fedora40" {
   ssh_username     = var.ssh_username
   ssh_password     = var.ssh_password
   ssh_timeout      = var.ssh_timeout
-  
   shutdown_command = "echo '${var.ssh_password}' | sudo -S shutdown -P now"
   output_directory = "${var.output_directory}/${var.distribution}/${var.version}/${var.architecture}"
   vm_name          = "${var.distribution}-${var.version}-${var.architecture}.qcow2"
-  
-  // Distribution-specific configurations
   iso_url          = var.iso_url
   iso_checksum     = var.iso_checksum
-  // Remove http_directory parameter
   boot_command     = var.boot_command
   qemu_binary      = var.qemu_binary
-  
-  // QEMU settings
   accelerator      = "kvm"
   format           = "qcow2"
   disk_interface   = "virtio"
@@ -135,11 +120,7 @@ source "qemu" "fedora40" {
   disk_compression = true
   disk_discard     = "unmap"
   net_device       = "virtio-net"
-  
-  // Use architecture-specific QEMU arguments
   qemuargs = local.qemu_args_arm64
-  
-  // Use the template file for HTTP
   http_content = {
     "/ks.cfg" = templatefile("http/ks.cfg.pkrtpl.hcl", {
       install_url = local.install_url
@@ -149,10 +130,7 @@ source "qemu" "fedora40" {
 
 build {
   name = "fedora40-arm64"
-  
   sources = ["source.qemu.fedora40"]
-  
-  // Update system
   provisioner "shell" {
     scripts = [
       "${path.root}/../../../common/scripts/update.sh",
@@ -160,5 +138,4 @@ build {
     ]
     execute_command = "echo '${var.ssh_password}' | {{.Vars}} sudo -S -E bash '{{.Path}}'"
   } 
-  // Add any additional provisioners here
 }
