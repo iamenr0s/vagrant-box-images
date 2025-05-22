@@ -138,7 +138,7 @@ source "qemu" "fedora40" {
   
   // Use the template file for HTTP
   http_content = {
-    "/ks.cfg" = templatefile("${path.root}/http/ks.cfg.pkrtpl.hcl", {
+    "/ks.cfg" = templatefile("http/ks.cfg.pkrtpl.hcl", {
       install_url = local.install_url
     })
   }
