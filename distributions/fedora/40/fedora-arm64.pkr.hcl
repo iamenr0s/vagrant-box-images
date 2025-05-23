@@ -88,11 +88,17 @@ locals {
   qemu_args_arm64 = [
     ["-m", "${var.memory}"],
     ["-smp", "${var.cpus}"],
+    ["-serial", "stdio"],
     ["-bios", "/usr/share/qemu-efi-aarch64/QEMU_EFI.fd"],
-    ["-machine", "type=virt,accel=kvm"],
-    ["-cpu", "host,aarch64=on"],
+    ["-boot", "menu=on"],
+    ["-machine", "type=virt"],
+    ["-device", "qemu-xhci"],
+    ["-device", "usb-kbd"],
+    ["-device", "usb-mouse"],
+    ["-cpu", "cortex-a57"],
     ["-netdev", "user,id=user.0,hostfwd=tcp::{{ .SSHHostPort }}-:22"],
-    ["-device", "virtio-net-pci,netdev=user.0"]
+    ["-device", "virtio-net-pci,netdev=user.0"],
+    ["-device", "virtio-gpu-pci"]
   ]
   
   install_url = "https://fedora.mirrorservice.org/fedora/linux/releases/40/Server/aarch64/os/"
