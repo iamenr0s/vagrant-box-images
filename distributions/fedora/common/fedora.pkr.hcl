@@ -154,7 +154,6 @@ source "qemu" "fedora" {
   disk_size         = var.disk_size
   format            = "qcow2"
   accelerator       = "kvm"
-  http_directory    = "http"
   ssh_username      = var.ssh_username
   ssh_password      = var.ssh_password
   ssh_timeout       = var.ssh_timeout
@@ -166,6 +165,11 @@ source "qemu" "fedora" {
   qemu_binary       = var.qemu_binary
   headless          = var.headless
   qemuargs          = var.qemu_args
+  http_content = {
+    "/ks.cfg" = templatefile("http/ks.cfg.pkrtpl.hcl", {
+      install_url = local.install_url
+    })
+  }
 }
 
 // Build definition
@@ -173,23 +177,6 @@ build {
   name = "${var.distribution}-${var.version}-${var.architecture}"
   
   sources = ["source.qemu.fedora"]
-
-  // Copy the kickstart template and process variables
-  provisioner "file" {
-    source      = "${path.root}/http/ks.cfg.pkrtpl.hcl"
-    destination = "/tmp/ks.cfg.pkrtpl.hcl"
-  }
-
-  // Process the kickstart template using Packer's template engine
-  provisioner "file" {
-    content     = templatefile("http/ks.cfg.pkrtpl.hcl", { install_url = local.actual_install_url })
-    destination = "/tmp/http/ks.cfg"
-  }
-  
-  // Create the http directory
-  provisioner "shell" {
-    inline = ["mkdir -p /tmp/http"]
-  }
 
   // Run Fedora-specific setup script
   provisioner "shell" {
