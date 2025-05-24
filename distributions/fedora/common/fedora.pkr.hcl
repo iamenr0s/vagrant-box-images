@@ -133,10 +133,10 @@ build {
 
   // Process the kickstart template
   provisioner "shell" {
+    environment_vars = ["INSTALL_URL=${var.install_url}"]
     inline = [
       "mkdir -p /tmp/http",
-      "INSTALL_URL='${var.install_url}'",
-      "cat /tmp/ks.cfg.pkrtpl.hcl | sed 's/\${install_url}/'$INSTALL_URL'/g' > /tmp/http/ks.cfg"
+      "cat /tmp/ks.cfg.pkrtpl.hcl | INSTALL_URL='${var.install_url}' envsubst > /tmp/http/ks.cfg"
     ]
   }
 
