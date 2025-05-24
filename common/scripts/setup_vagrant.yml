@@ -1,0 +1,71 @@
+---
+- name: Setup Vagrant Environment
+  hosts: all
+  become: yes
+  tasks:
+    - name: Install necessary packages for Vagrant on Fedora
+      dnf:
+        name:
+          - gcc
+          - make
+          - perl
+          - kernel-devel
+          - kernel-headers
+          - bzip2
+        state: present
+      when: ansible_distribution == "Fedora"
+
+    - name: Install necessary packages for Vagrant on Debian/Ubuntu
+      apt:
+        name:
+          - gcc
+          - make
+          - perl
+          - "linux-headers-{{ ansible_kernel }}"
+          - bzip2
+        state: present
+      when: ansible_os_family == "Debian"
+
+    - name: Install necessary packages for Vagrant on RHEL/CentOS/AlmaLinux
+      dnf:
+        name:
+          - gcc
+          - make
+          - perl
+          - kernel-devel
+          - kernel-headers
+          - bzip2
+        state: present
+      when: ansible_os_family == "RedHat" and ansible_distribution != "Fedora"
+
+    - name: Check if using libvirt
+      stat:
+        path: /etc/vagrant-libvirt
+      register: vagrant_libvirt
+
+    - name: VirtualBox Guest Additions placeholder
+      debug:
+        msg: "VirtualBox Guest Additions installation would go here"
+      when: not vagrant_libvirt.stat.exists
+
+    - name: Configure password-less sudo for the vagrant user
+      copy:
+        dest: /etc/sudoers.d/vagrant
+        content: "vagrant ALL=(ALL) NOPASSWD: ALL"
+        mode: '0440'
+
+    - name: Create .ssh directory for vagrant user
+      file:
+        path: /home/vagrant/.ssh
+        state: directory
+        mode: '0700'
+        owner: vagrant
+        group: vagrant
+
+    - name: Add vagrant insecure public key
+      copy:
+        dest: /home/vagrant/.ssh/authorized_keys
+        content: "ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEA6NF8iallvQVp22WDkTkyrtvp9eWW6A8YVr+kz4TjGYe7gHzIw+niNltGEFHzD8+v1I2YJ6oXevct1YeS0o9HZyN1Q9qgCgzUFtdOKLv6IedplqoPkcmF0aYet2PkEDo3MlTBckFXPITAMzF8dJSIFo9D8HfdOV0IAdx4O7PtixWKn5y2hMNG0zQPyUecp4pzC6kivAIhyfHilFR61RGL+GPXQ2MWZWFYbAGjyiYJnAmCP3NOTd0jMZEnDkbUvxhMmBYSdETk1rRgm+R4LOzFUGaHqHDLKLX+FIPKcF96hrucXzcWyLbIbEgE98OHlnVYCzRdK8jlqm8tehUc9c9WhQ== vagrant insecure public key"
+        mode: '0600'
+        owner: vagrant
+        group: vagrant

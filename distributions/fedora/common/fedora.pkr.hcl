@@ -178,17 +178,27 @@ build {
   
   sources = ["source.qemu.fedora"]
 
-  // Run Fedora-specific setup script
+  // Install Python and pip, then install Ansible with pip
   provisioner "shell" {
-    script = "${path.root}/scripts/setup.sh"
+    inline = [
+      "dnf -y install python3 python3-pip",
+      "pip3 install --user ansible",
+      "echo 'export PATH=$PATH:~/.local/bin' >> ~/.bashrc",
+      "source ~/.bashrc"
+    ]
   }
 
-  // Run common scripts
-  provisioner "shell" {
-    scripts = [
-      "${path.cwd}/common/scripts/update.sh",
-      "${path.cwd}/common/scripts/setup_vagrant.sh",
-      "${path.cwd}/common/scripts/cleanup.sh"
+  // Run Fedora-specific setup using Ansible
+  provisioner "ansible-local" {
+    playbook_file = "${path.root}/scripts/setup.yml"
+  }
+
+  // Run common Ansible playbooks
+  provisioner "ansible-local" {
+    playbook_files = [
+      "${path.cwd}/common/scripts/update.yml",
+      "${path.cwd}/common/scripts/setup_vagrant.yml",
+      "${path.cwd}/common/scripts/cleanup.yml"
     ]
   }
 

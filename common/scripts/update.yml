@@ -1,0 +1,22 @@
+---
+- name: Update System
+  hosts: all
+  become: yes
+  tasks:
+    - name: Update Fedora system
+      dnf:
+        name: "*"
+        state: latest
+      when: ansible_distribution == "Fedora"
+
+    - name: Update Debian/Ubuntu system
+      apt:
+        upgrade: dist
+        update_cache: yes
+      when: ansible_os_family == "Debian"
+
+    - name: Update RHEL/CentOS/AlmaLinux system
+      dnf:
+        name: "*"
+        state: latest
+      when: ansible_os_family == "RedHat" and ansible_distribution != "Fedora"
