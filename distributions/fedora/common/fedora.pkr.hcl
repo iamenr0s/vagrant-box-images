@@ -180,13 +180,15 @@ build {
     destination = "/tmp/ks.cfg.pkrtpl.hcl"
   }
 
-  // Process the kickstart template
+  // Process the kickstart template using Packer's template engine
+  provisioner "file" {
+    content     = templatefile("${path.root}/http/ks.cfg.pkrtpl.hcl", { install_url = local.actual_install_url })
+    destination = "/tmp/http/ks.cfg"
+  }
+  
+  // Create the http directory
   provisioner "shell" {
-    environment_vars = ["INSTALL_URL=${var.install_url}"]
-    inline = [
-      "mkdir -p /tmp/http",
-      "cat /tmp/ks.cfg.pkrtpl.hcl | INSTALL_URL='${var.install_url}' envsubst > /tmp/http/ks.cfg"
-    ]
+    inline = ["mkdir -p /tmp/http"]
   }
 
   // Run Fedora-specific setup script
