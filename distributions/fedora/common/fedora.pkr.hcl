@@ -167,7 +167,7 @@ source "qemu" "fedora" {
   qemuargs          = var.qemu_args
   http_content = {
     "/ks.cfg" = templatefile("http/ks.cfg.pkrtpl.hcl", {
-      install_url = local.install_url
+      install_url = local.actual_install_url
     })
   }
 }
