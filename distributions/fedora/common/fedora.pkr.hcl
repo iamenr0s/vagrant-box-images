@@ -182,7 +182,7 @@ build {
 
   // Process the kickstart template using Packer's template engine
   provisioner "file" {
-    content     = templatefile("${path.root}/http/ks.cfg.pkrtpl.hcl", { install_url = local.actual_install_url })
+    content     = templatefile("http/ks.cfg.pkrtpl.hcl", { install_url = local.actual_install_url })
     destination = "/tmp/http/ks.cfg"
   }
   
@@ -199,9 +199,9 @@ build {
   // Run common scripts
   provisioner "shell" {
     scripts = [
-      "${path.root}/../../common/scripts/update.sh",
-      "${path.root}/../../common/scripts/setup_vagrant.sh",
-      "${path.root}/../../common/scripts/cleanup.sh"
+      "../../../common/scripts/update.sh",
+      "../../../common/scripts/setup_vagrant.sh",
+      "../../../common/scripts/cleanup.sh"
     ]
   }
 
