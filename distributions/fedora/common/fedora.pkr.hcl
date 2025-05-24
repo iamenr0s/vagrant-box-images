@@ -17,19 +17,60 @@ variable "architecture" {
 }
 
 // ISO variables
+// Architecture-specific ISO variables
+variable "x86_64_iso_url" {
+  type    = string
+  default = ""
+  description = "URL to the x86_64 ISO image"
+}
+
+variable "x86_64_iso_checksum" {
+  type    = string
+  default = ""
+  description = "Checksum of the x86_64 ISO image"
+}
+
+variable "x86_64_install_url" {
+  type    = string
+  default = ""
+  description = "URL to the x86_64 installation repository"
+}
+
+variable "arm64_iso_url" {
+  type    = string
+  default = ""
+  description = "URL to the arm64 ISO image"
+}
+
+variable "arm64_iso_checksum" {
+  type    = string
+  default = ""
+  description = "Checksum of the arm64 ISO image"
+}
+
+variable "arm64_install_url" {
+  type    = string
+  default = ""
+  description = "URL to the arm64 installation repository"
+}
+
+// Generic ISO variables (for backward compatibility)
 variable "iso_url" {
   type    = string
-  description = "URL to the ISO image"
+  default = ""
+  description = "URL to the ISO image (optional, architecture-specific variables take precedence)"
 }
 
 variable "iso_checksum" {
   type    = string
-  description = "Checksum of the ISO image"
+  default = ""
+  description = "Checksum of the ISO image (optional, architecture-specific variables take precedence)"
 }
 
 variable "install_url" {
   type    = string
-  description = "URL to the installation repository"
+  default = ""
+  description = "URL to the installation repository (optional, architecture-specific variables take precedence)"
 }
 
 // Boot and SSH variables
@@ -96,10 +137,18 @@ variable "headless" {
   default = "true"
 }
 
+// Local variables to handle architecture-specific settings
+locals {
+  // Use architecture-specific variables if available, otherwise fall back to generic ones
+  actual_iso_url = var.architecture == "x86_64" ? coalesce(var.x86_64_iso_url, var.iso_url) : coalesce(var.arm64_iso_url, var.iso_url)
+  actual_iso_checksum = var.architecture == "x86_64" ? coalesce(var.x86_64_iso_checksum, var.iso_checksum) : coalesce(var.arm64_iso_checksum, var.iso_checksum)
+  actual_install_url = var.architecture == "x86_64" ? coalesce(var.x86_64_install_url, var.install_url) : coalesce(var.arm64_install_url, var.install_url)
+}
+
 // Fedora QEMU builder configuration
 source "qemu" "fedora" {
-  iso_url           = var.iso_url
-  iso_checksum      = var.iso_checksum
+  iso_url           = local.actual_iso_url
+  iso_checksum      = local.actual_iso_checksum
   output_directory  = "${var.output_directory}/${var.distribution}-${var.version}-${var.architecture}"
   shutdown_command  = "echo 'vagrant' | sudo -S shutdown -P now"
   disk_size         = var.disk_size
