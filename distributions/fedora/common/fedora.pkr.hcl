@@ -199,9 +199,9 @@ build {
   // Run common scripts
   provisioner "shell" {
     scripts = [
-      "../../../common/scripts/update.sh",
-      "../../../common/scripts/setup_vagrant.sh",
-      "../../../common/scripts/cleanup.sh"
+      "../../common/scripts/update.sh",
+      "../../common/scripts/setup_vagrant.sh",
+      "../../common/scripts/cleanup.sh"
     ]
   }
 
