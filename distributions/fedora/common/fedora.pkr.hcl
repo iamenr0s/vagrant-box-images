@@ -135,7 +135,7 @@ build {
   provisioner "shell" {
     inline = [
       "mkdir -p /tmp/http",
-      "cat /tmp/ks.cfg.pkrtpl.hcl | sed 's|\$${install_url}|${var.install_url}|g' > /tmp/http/ks.cfg"
+      "cat /tmp/ks.cfg.pkrtpl.hcl | sed 's/\${install_url}/${var.install_url}/g' > /tmp/http/ks.cfg"
     ]
   }
 
