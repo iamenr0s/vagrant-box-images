@@ -182,7 +182,7 @@ build {
   provisioner "shell" {
     execute_command = "echo 'vagrant' | {{.Vars}} sudo -S -E bash '{{.Path}}'"
     inline = [
-      "dnf -y install python3 python3-pip"
+      "dnf -y install python3 python3-pip python3-libdnf5"
     ]
   }
   
