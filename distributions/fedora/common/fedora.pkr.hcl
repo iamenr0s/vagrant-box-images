@@ -178,31 +178,39 @@ build {
   
   sources = ["source.qemu.fedora"]
 
-  // Install Python and pip with sudo
+  // Install Python and pip dependencies as root
+  provisioner "shell" {
+    execute_command = "echo 'vagrant' | {{.Vars}} sudo -S -E bash '{{.Path}}'"
+    inline = [
+      "dnf -y install python3 python3-pip"
+    ]
+  }
+  
+  // Install Ansible as vagrant user
   provisioner "shell" {
     inline = [
-      "sudo dnf -y install python3 python3-pip",
-      "python3 -m venv ~/ansible_venv",
-      "source ~/ansible_venv/bin/activate",
-      "pip install ansible",
-      "deactivate"
+      "pip3 install --user ansible",
+      "echo 'export PATH=$HOME/.local/bin:$PATH' >> ~/.bashrc",
+      "export PATH=$HOME/.local/bin:$PATH"
     ]
   }
 
-  // Run Fedora-specific setup using Ansible from the virtual environment with sudo
+  // Run Fedora-specific setup using Ansible
   provisioner "ansible-local" {
     playbook_file = "${path.root}/scripts/setup.yml"
-    command = "sudo bash -c 'source ~/ansible_venv/bin/activate && ansible-playbook'"
+    command = "$HOME/.local/bin/ansible-playbook"
+    extra_arguments = ["-b"]
   }
 
-  // Run common Ansible playbooks with sudo
+  // Run common Ansible playbooks
   provisioner "ansible-local" {
     playbook_files = [
       "${path.cwd}/common/scripts/update.yml",
       "${path.cwd}/common/scripts/setup_vagrant.yml",
       "${path.cwd}/common/scripts/cleanup.yml"
     ]
-    command = "sudo bash -c 'source ~/ansible_venv/bin/activate && ansible-playbook'"
+    command = "$HOME/.local/bin/ansible-playbook"
+    extra_arguments = ["-b"]
   }
 
   // Create Vagrant box
