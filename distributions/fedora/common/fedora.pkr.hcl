@@ -181,7 +181,7 @@ build {
   // Install Python and pip with sudo
   provisioner "shell" {
     inline = [
-      "sudo dnf -y install python3 python3-pip python3-venv",
+      "sudo dnf -y install python3 python3-pip",
       "python3 -m venv ~/ansible_venv",
       "source ~/ansible_venv/bin/activate",
       "pip install ansible",
