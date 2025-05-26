@@ -199,7 +199,7 @@ build {
   provisioner "ansible-local" {
     playbook_file = "${path.root}/scripts/setup.yml"
     command = "$HOME/.local/bin/ansible-playbook"
-    extra_arguments = ["-b"]
+    extra_arguments = ["-b", "-v"] // Added -v for verbose output
   }
 
   // Run common Ansible playbooks
@@ -210,7 +210,7 @@ build {
       "${path.cwd}/common/scripts/cleanup.yml"
     ]
     command = "$HOME/.local/bin/ansible-playbook"
-    extra_arguments = ["-b"]
+    extra_arguments = ["-b", "-v"] // Added -v for verbose output
   }
 
   // Create Vagrant box
