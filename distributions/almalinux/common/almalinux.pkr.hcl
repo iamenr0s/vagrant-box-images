@@ -182,11 +182,7 @@ build {
   provisioner "shell" {
     execute_command = "echo 'vagrant' | {{.Vars}} sudo -S -E bash '{{.Path}}'"
     inline = [
-      "if [ $(rpm -E %{rhel}) -eq 8 ]; then",
-      "  dnf -y install python3 python3-pip python3-dnf",
-      "else",
-      "  dnf -y install python3 python3-pip python3-libdnf5",
-      "fi"
+      "dnf -y install python3 python3-pip"
     ]
   }
   
