@@ -167,7 +167,7 @@ source "qemu" "almalinux" {
   boot_wait         = "10s"
   boot_command      = var.boot_command
   qemu_binary       = var.qemu_binary
-  qemu_args         = var.qemu_args
+  qemuargs          = var.qemu_args
   headless          = var.headless
 }
 
