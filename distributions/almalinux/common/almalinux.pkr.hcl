@@ -184,15 +184,14 @@ build {
   }
 
   provisioner "ansible-local" {
-    playbook_file = "scripts/setup.yml"
+    playbook_file = "${path.root}/scripts/setup.yml"
   }
 
   provisioner "ansible-local" {
-    playbook_file = "../../../common/scripts/update.yml"
-  }
-
-  provisioner "ansible-local" {
-    playbook_file = "../../../common/scripts/cleanup.yml"
+    playbook_files = [
+      "${path.cwd}/common/scripts/update.yml",
+      "${path.cwd}/common/scripts/cleanup.yml"
+    ]
   }
 
   post-processor "vagrant" {
