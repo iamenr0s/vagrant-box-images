@@ -100,14 +100,12 @@ variable "ssh_timeout" {
 // System resources
 variable "cpus" {
   type    = string
-  default = "2"
   description = "Number of CPUs"
 }
 
 variable "memory" {
   type    = string
-  default = "2048"
-  description = "Memory in MB"
+  description = "Memory size in MB"
 }
 
 variable "disk_size" {
@@ -116,44 +114,43 @@ variable "disk_size" {
   description = "Disk size in MB"
 }
 
-variable "headless" {
-  type    = string
-  default = "true"
-  description = "Start without a console"
-}
-
+// QEMU specific
 variable "qemu_binary" {
   type    = string
-  default = ""
-  description = "Path to QEMU binary"
+  description = "Path to the QEMU binary"
 }
 
 variable "qemu_args" {
   type    = list(list(string))
-  default = []
-  description = "Additional arguments for QEMU"
+  description = "Additional arguments to pass to QEMU"
 }
 
 // Output variables
 variable "output_directory" {
   type    = string
   default = "output"
-  description = "Directory to output built images"
+  description = "Directory where the output artifacts will be stored"
 }
 
-// Determine the effective ISO URL, checksum, and install URL based on architecture
+variable "headless" {
+  type    = string
+  default = "true"
+}
+
+// Local variables to handle architecture-specific settings
 locals {
-  effective_iso_url = var.architecture == "x86_64" ? coalesce(var.x86_64_iso_url, var.iso_url) : coalesce(var.arm64_iso_url, var.iso_url)
-  effective_iso_checksum = var.architecture == "x86_64" ? coalesce(var.x86_64_iso_checksum, var.iso_checksum) : coalesce(var.arm64_iso_checksum, var.iso_checksum)
-  effective_install_url = var.architecture == "x86_64" ? coalesce(var.x86_64_install_url, var.install_url) : coalesce(var.arm64_install_url, var.install_url)
+  // Use architecture-specific variables if available, otherwise fall back to generic ones
+  actual_iso_url = var.architecture == "x86_64" ? coalesce(var.x86_64_iso_url, var.iso_url) : coalesce(var.arm64_iso_url, var.iso_url)
+  actual_iso_checksum = var.architecture == "x86_64" ? coalesce(var.x86_64_iso_checksum, var.iso_checksum) : coalesce(var.arm64_iso_checksum, var.iso_checksum)
+  actual_install_url = var.architecture == "x86_64" ? coalesce(var.x86_64_install_url, var.install_url) : coalesce(var.arm64_install_url, var.install_url)
 }
 
-// The Packer build definition
-source "qemu" "almalinux" {
-  iso_url           = local.effective_iso_url
-  iso_checksum      = local.effective_iso_checksum
+// Fedora QEMU builder configuration
+source "qemu" "fedora" {
+  iso_url           = local.actual_iso_url
+  iso_checksum      = local.actual_iso_checksum
   output_directory  = "${var.output_directory}/${var.distribution}-${var.version}-${var.architecture}"
-  shutdown_command  = "echo 'vagrant' | sudo -S /sbin/shutdown -h now"
+  shutdown_command  = "echo 'vagrant' | sudo -S shutdown -P now"
   disk_size         = var.disk_size
   format            = "qcow2"
   accelerator       = "kvm"
@@ -166,8 +163,8 @@ source "qemu" "almalinux" {
   boot_wait         = "10s"
   boot_command      = var.boot_command
   qemu_binary       = var.qemu_binary
-  qemuargs          = var.qemu_args
   headless          = var.headless
+  qemuargs          = var.qemu_args
   http_content = {
     "/ks.cfg" = templatefile("http/ks.cfg.pkrtpl.hcl", {
       install_url = local.actual_install_url
@@ -175,30 +172,50 @@ source "qemu" "almalinux" {
   }
 }
 
+// Build definition
 build {
-  sources = ["source.qemu.almalinux"]
+  name = "${var.distribution}-${var.version}-${var.architecture}"
+  
+  sources = ["source.qemu.fedora"]
 
+  // Install Python and pip dependencies as root
   provisioner "shell" {
-    execute_command = "echo 'vagrant' | {{ .Vars }} sudo -S -E bash '{{ .Path }}'"
+    execute_command = "echo 'vagrant' | {{.Vars}} sudo -S -E bash '{{.Path}}'"
     inline = [
-      "dnf -y update",
-      "dnf -y install epel-release",
-      "dnf -y install ansible"
+      "dnf -y install python3 python3-pip python3-libdnf5"
+    ]
+  }
+  
+  // Install Ansible as vagrant user
+  provisioner "shell" {
+    inline = [
+      "pip3 install --user ansible",
+      "echo 'export PATH=$HOME/.local/bin:$PATH' >> ~/.bashrc",
+      "export PATH=$HOME/.local/bin:$PATH"
     ]
   }
 
+  // Run Fedora-specific setup using Ansible
   provisioner "ansible-local" {
     playbook_file = "${path.root}/scripts/setup.yml"
+    command = "$HOME/.local/bin/ansible-playbook"
+    extra_arguments = ["-b", "-v"] // Added -v for verbose output
   }
 
+  // Run common Ansible playbooks
   provisioner "ansible-local" {
     playbook_files = [
       "${path.cwd}/common/scripts/update.yml",
+      "${path.cwd}/common/scripts/setup_vagrant.yml",
       "${path.cwd}/common/scripts/cleanup.yml"
     ]
+    command = "$HOME/.local/bin/ansible-playbook"
+    extra_arguments = ["-b", "-v"] // Added -v for verbose output
   }
 
+  // Create Vagrant box
   post-processor "vagrant" {
-    output = "${var.output_directory}/${var.distribution}-${var.version}-${var.architecture}.box"
+    compression_level = 9
+    output            = "${var.output_directory}/${var.distribution}-${var.version}-${var.architecture}.box"
   }
 }
