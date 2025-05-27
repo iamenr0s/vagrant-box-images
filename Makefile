@@ -1,10 +1,9 @@
 # Makefile for building Vagrant box images
 
-.PHONY: all clean fedora-40-x86_64 fedora-40-arm64 fedora-41-x86_64 fedora-41-arm64 fedora-42-x86_64 fedora-42-arm64
+.PHONY: all clean fedora-40-x86_64 fedora-40-arm64 fedora-41-x86_64 fedora-41-arm64 fedora-42-x86_64 fedora-42-arm64 almalinux-8-x86_64 almalinux-8-arm64 almalinux-9-x86_64 almalinux-9-arm64
 
-all: fedora-40-x86_64 fedora-40-arm64 fedora-41-x86_64 fedora-41-arm64 fedora-42-x86_64 fedora-42-arm64
+all: fedora-40-x86_64 fedora-40-arm64 fedora-41-x86_64 fedora-41-arm64 fedora-42-x86_64 fedora-42-arm64 almalinux-8-x86_64 almalinux-8-arm64 almalinux-9-x86_64 almalinux-9-arm64
 
-# Fedora 40
 # Fedora 40
 fedora-40-x86_64:
 	packer build \
@@ -50,6 +49,35 @@ fedora-42-arm64:
 		-var-file=distributions/fedora/variables/fedora-42.pkrvars.hcl \
 		distributions/fedora/common/fedora.pkr.hcl
 
-# Clean output directories
+# AlmaLinux 8
+almalinux-8-x86_64:
+	packer build \
+		-var-file=distributions/almalinux/variables/common.pkrvars.hcl \
+		-var-file=distributions/almalinux/variables/arch-x86_64.pkrvars.hcl \
+		-var-file=distributions/almalinux/variables/almalinux-8.pkrvars.hcl \
+		distributions/almalinux/common/almalinux.pkr.hcl
+
+almalinux-8-arm64:
+	packer build \
+		-var-file=distributions/almalinux/variables/common.pkrvars.hcl \
+		-var-file=distributions/almalinux/variables/arch-arm64.pkrvars.hcl \
+		-var-file=distributions/almalinux/variables/almalinux-8.pkrvars.hcl \
+		distributions/almalinux/common/almalinux.pkr.hcl
+
+# AlmaLinux 9
+almalinux-9-x86_64:
+	packer build \
+		-var-file=distributions/almalinux/variables/common.pkrvars.hcl \
+		-var-file=distributions/almalinux/variables/arch-x86_64.pkrvars.hcl \
+		-var-file=distributions/almalinux/variables/almalinux-9.pkrvars.hcl \
+		distributions/almalinux/common/almalinux.pkr.hcl
+
+almalinux-9-arm64:
+	packer build \
+		-var-file=distributions/almalinux/variables/common.pkrvars.hcl \
+		-var-file=distributions/almalinux/variables/arch-arm64.pkrvars.hcl \
+		-var-file=distributions/almalinux/variables/almalinux-9.pkrvars.hcl \
+		distributions/almalinux/common/almalinux.pkr.hcl
+
 clean:
 	rm -rf output/*
