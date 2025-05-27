@@ -15,6 +15,12 @@
           - cloud-utils-growpart
           - NetworkManager
           - qemu-guest-agent
+          - gcc
+          - openssl-devel
+          - libffi-devel
+          - python3-devel
+          - cargo
+          - pkg-config
         state: present
 
     - name: Enable NetworkManager service
