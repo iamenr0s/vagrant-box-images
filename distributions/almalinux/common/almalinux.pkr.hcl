@@ -157,7 +157,6 @@ source "qemu" "almalinux" {
   disk_size         = var.disk_size
   format            = "qcow2"
   accelerator       = "kvm"
-  http_directory    = "http"
   ssh_username      = var.ssh_username
   ssh_password      = var.ssh_password
   ssh_timeout       = var.ssh_timeout
@@ -169,6 +168,11 @@ source "qemu" "almalinux" {
   qemu_binary       = var.qemu_binary
   qemuargs          = var.qemu_args
   headless          = var.headless
+  http_content = {
+    "/ks.cfg" = templatefile("http/ks.cfg.pkrtpl.hcl", {
+      install_url = local.actual_install_url
+    })
+  }
 }
 
 build {
