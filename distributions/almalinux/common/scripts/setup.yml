@@ -23,6 +23,21 @@
           - pkg-config
         state: present
 
+    - name: Upgrade pip to latest version
+      pip:
+        name: pip
+        state: latest
+        executable: pip3
+
+    - name: Install setuptools_rust and other required Python packages
+      pip:
+        name:
+          - setuptools_rust
+          - wheel
+          - setuptools>=40.6.0
+        state: present
+        executable: pip3
+
     - name: Enable NetworkManager service
       systemd:
         name: NetworkManager
