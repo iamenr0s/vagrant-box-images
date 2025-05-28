@@ -29,12 +29,12 @@
         state: latest
         executable: pip3
 
-    - name: Install setuptools_rust and other required Python packages
+    - name: Install setuptools-rust and other required Python packages
       pip:
         name:
-          - setuptools-rust
           - wheel
           - setuptools>=40.6.0
+          - setuptools-rust
         state: present
         executable: pip3
 
