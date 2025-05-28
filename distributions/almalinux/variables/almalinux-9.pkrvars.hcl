@@ -4,7 +4,7 @@ version = "9"
 
 // x86_64 specific
 x86_64_iso_url = "https://repo.almalinux.org/almalinux/9/isos/x86_64/AlmaLinux-9-latest-x86_64-minimal.iso"
-x86_64_iso_checksum = "sha256:af6d3384277fa5d57a3caeaac38a4d07ef77d21f5f5b7f5d10169a3db7cb5fd7"
+x86_64_iso_checksum = "sha256:27a346c74d8755516a4ad2057ea29c2450454f1a928628734f26e12b0b8120d7"
 x86_64_install_url = "https://repo.almalinux.org/almalinux/9/BaseOS/x86_64/os/"
 
 // arm64 specific
