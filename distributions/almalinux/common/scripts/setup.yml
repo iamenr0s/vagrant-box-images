@@ -32,7 +32,7 @@
     - name: Install setuptools_rust and other required Python packages
       pip:
         name:
-          - setuptools_rust
+          - setuptools-rust
           - wheel
           - setuptools>=40.6.0
         state: present
