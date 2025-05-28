@@ -3,11 +3,11 @@
 version = "10"
 
 // x86_64 specific
-x86_64_iso_url = "https://repo.almalinux.org/almalinux/10/isos/x86_64/AlmaLinux-9-latest-x86_64-minimal.iso"
-x86_64_iso_checksum = "sha256:27a346c74d8755516a4ad2057ea29c2450454f1a928628734f26e12b0b8120d7"
+x86_64_iso_url = "https://repo.almalinux.org/almalinux/10/isos/x86_64/AlmaLinux-10.0-x86_64-minimal.iso"
+x86_64_iso_checksum = "sha256:e73ccc95ff21a43ab23eebe227257fa34df091570b2bcf8a23f918bf9b662fc3"
 x86_64_install_url = "https://repo.almalinux.org/almalinux/10/BaseOS/x86_64/os/"
 
 // arm64 specific
-arm64_iso_url = "https://repo.almalinux.org/almalinux/9/isos/aarch64/AlmaLinux-9-latest-aarch64-minimal.iso"
-arm64_iso_checksum = "sha256:a0ec54cffa36c674633f5b031dcc3034d6e0aff1dd8e58bbfe4be9b5cb7a079a"
+arm64_iso_url = "https://repo.almalinux.org/almalinux/10/isos/aarch64/AlmaLinux-10.0-aarch64-minimal.iso"
+arm64_iso_checksum = "sha256:6257c3425b634c0cef9016e008627584f7eb96b09d27c521a0cb299409293dab"
 arm64_install_url = "https://repo.almalinux.org/almalinux/10/BaseOS/aarch64/os/"
