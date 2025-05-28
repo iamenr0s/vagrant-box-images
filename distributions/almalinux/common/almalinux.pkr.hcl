@@ -189,6 +189,7 @@ build {
   // Install Ansible as vagrant user
   provisioner "shell" {
     inline = [
+      "pip3 install --user --upgrade pip",
       "pip3 install --user ansible",
       "echo 'export PATH=$HOME/.local/bin:$PATH' >> ~/.bashrc",
       "export PATH=$HOME/.local/bin:$PATH"
