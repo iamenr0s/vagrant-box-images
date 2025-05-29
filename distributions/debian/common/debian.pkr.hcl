@@ -179,7 +179,7 @@ build {
   // Run Debian-specific setup using Ansible
   provisioner "ansible-local" {
     playbook_files = [
-      "scripts/setup.yml"
+      "${path.root}/scripts/setup.yml"
     ]
     command = "$HOME/.local/bin/ansible-playbook"
     extra_arguments = ["-b", "-v"]
