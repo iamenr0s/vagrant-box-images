@@ -96,32 +96,32 @@ almalinux-10-arm64:
 
 # RockyLinux 8
 rockylinux-8-x86_64:
-	packer build \\
-		-var-file=distributions/rockylinux/variables/common.pkrvars.hcl \\
-		-var-file=distributions/rockylinux/variables/arch-x86_64.pkrvars.hcl \\
-		-var-file=distributions/rockylinux/variables/rockylinux-8.pkrvars.hcl \\
+	packer build \
+		-var-file=distributions/rockylinux/variables/common.pkrvars.hcl \
+		-var-file=distributions/rockylinux/variables/arch-x86_64.pkrvars.hcl \
+		-var-file=distributions/rockylinux/variables/rockylinux-8.pkrvars.hcl \
 		distributions/rockylinux/common/rockylinux.pkr.hcl
 
 rockylinux-8-arm64:
-	packer build \\
-		-var-file=distributions/rockylinux/variables/common.pkrvars.hcl \\
-		-var-file=distributions/rockylinux/variables/arch-arm64.pkrvars.hcl \\
-		-var-file=distributions/rockylinux/variables/rockylinux-8.pkrvars.hcl \\
+	packer build \
+		-var-file=distributions/rockylinux/variables/common.pkrvars.hcl \
+		-var-file=distributions/rockylinux/variables/arch-arm64.pkrvars.hcl \
+		-var-file=distributions/rockylinux/variables/rockylinux-8.pkrvars.hcl \
 		distributions/rockylinux/common/rockylinux.pkr.hcl
 
 # RockyLinux 9
 rockylinux-9-x86_64:
-	packer build \\
-		-var-file=distributions/rockylinux/variables/common.pkrvars.hcl \\
-		-var-file=distributions/rockylinux/variables/arch-x86_64.pkrvars.hcl \\
-		-var-file=distributions/rockylinux/variables/rockylinux-9.pkrvars.hcl \\
+	packer build \
+		-var-file=distributions/rockylinux/variables/common.pkrvars.hcl \
+		-var-file=distributions/rockylinux/variables/arch-x86_64.pkrvars.hcl \
+		-var-file=distributions/rockylinux/variables/rockylinux-9.pkrvars.hcl \
 		distributions/rockylinux/common/rockylinux.pkr.hcl
 
 rockylinux-9-arm64:
-	packer build \\
-		-var-file=distributions/rockylinux/variables/common.pkrvars.hcl \\
-		-var-file=distributions/rockylinux/variables/arch-arm64.pkrvars.hcl \\
-		-var-file=distributions/rockylinux/variables/rockylinux-9.pkrvars.hcl \\
+	packer build \
+		-var-file=distributions/rockylinux/variables/common.pkrvars.hcl \
+		-var-file=distributions/rockylinux/variables/arch-arm64.pkrvars.hcl \
+		-var-file=distributions/rockylinux/variables/rockylinux-9.pkrvars.hcl \
 		distributions/rockylinux/common/rockylinux.pkr.hcl
 
 clean:
