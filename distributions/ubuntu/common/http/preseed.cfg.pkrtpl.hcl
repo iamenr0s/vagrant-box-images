@@ -14,7 +14,22 @@ d-i mirror/http/hostname string archive.ubuntu.com
 d-i mirror/http/directory string /ubuntu
 d-i mirror/http/proxy string
 
+# APT configuration - Skip scanning additional media and external repos
+d-i apt-setup/cdrom/set-first boolean false
+d-i apt-setup/cdrom/set-next boolean false
+d-i apt-setup/cdrom/set-failed boolean false
+d-i apt-setup/use_mirror boolean true
+d-i apt-setup/services-select multiselect none
+d-i apt-setup/security_host string
+d-i apt-setup/volatile_host string
+
 # Account setup
+# Root password configuration
+d-i passwd/root-login boolean true
+d-i passwd/root-password password vagrant
+d-i passwd/root-password-again password vagrant
+
+# User account configuration
 d-i passwd/user-fullname string Vagrant User
 d-i passwd/username string vagrant
 d-i passwd/user-password password vagrant
@@ -49,6 +64,9 @@ tasksel tasksel/first multiselect standard, server
 d-i pkgsel/include string openssh-server curl wget vim git qemu-guest-agent
 d-i pkgsel/upgrade select full-upgrade
 d-i pkgsel/update-policy select none
+
+# Popularity contest configuration - Skip participation
+popularity-contest popularity-contest/participate boolean false
 
 # Boot loader installation
 d-i grub-installer/only_debian boolean true
