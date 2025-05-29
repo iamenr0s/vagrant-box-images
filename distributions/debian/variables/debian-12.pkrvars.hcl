@@ -3,12 +3,12 @@
 version = "12"
 
 // x86_64 specific
-x86_64_iso_url = "https://cdimage.debian.org/debian-cd/current/amd64/iso-cd/debian-12.2.0-amd64-netinst.iso"
-x86_64_iso_checksum = "sha256:64d727dd5785ae5fcfd3ae8ffbede5f40cca96f1580aaa2820e8b99dae989d94"
+x86_64_iso_url = "https://cdimage.debian.org/debian-cd/current/amd64/iso-cd/debian-12.11.0-amd64-netinst.iso"
+x86_64_iso_checksum = "sha256:30ca12a15cae6a1033e03ad59eb7f66a6d5a258dcf27acd115c2bd42d22640e8"
 
 // arm64 specific
-arm64_iso_url = "https://cdimage.debian.org/debian-cd/current/arm64/iso-cd/debian-12.2.0-arm64-netinst.iso"
-arm64_iso_checksum = "sha256:f3c1c6fdba0f5b5b2b4b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b"
+arm64_iso_url = "https://cdimage.debian.org/debian-cd/current/arm64/iso-cd/debian-12.11.0-arm64-netinst.iso"
+arm64_iso_checksum = "sha256:5c050c495770ee9b076261cb8025a99a4866a15a4e3cdab2f59c49e8f69fb0ee"
 
 boot_command = [
   "<esc><wait>",
