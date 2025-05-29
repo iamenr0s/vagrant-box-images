@@ -146,7 +146,7 @@ locals {
 }
 
 // Fedora QEMU builder configuration
-source "qemu" "fedora" {
+source "qemu" "rockylinux" {
   iso_url           = local.actual_iso_url
   iso_checksum      = local.actual_iso_checksum
   output_directory  = "${var.output_directory}/${var.distribution}-${var.version}-${var.architecture}"
