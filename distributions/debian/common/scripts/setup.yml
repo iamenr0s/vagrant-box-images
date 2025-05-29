@@ -43,13 +43,20 @@
           network: {config: disabled}
         mode: '0644'
 
+    - name: Check if GRUB config exists
+      stat:
+        path: /etc/default/grub
+      register: grub_config
+
     - name: Configure GRUB for consistent network device naming
       lineinfile:
         path: /etc/default/grub
         regexp: '^GRUB_CMDLINE_LINUX='
         line: 'GRUB_CMDLINE_LINUX="net.ifnames=0 biosdevname=0"'
       notify: update grub
+      when: grub_config.stat.exists
 
   handlers:
     - name: update grub
       command: update-grub
+      when: grub_config.stat.exists
