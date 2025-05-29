@@ -168,6 +168,7 @@ source "qemu" "rockylinux" {
   http_content = {
     "/ks.cfg" = templatefile("http/ks.cfg.pkrtpl.hcl", {
       install_url = local.actual_install_url
+      version     = var.version
     })
   }
 }
