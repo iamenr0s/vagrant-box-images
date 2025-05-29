@@ -146,7 +146,7 @@ locals {
 }
 
 // Fedora QEMU builder configuration
-source "qemu" "fedora" {
+source "qemu" "almalinux" {
   iso_url           = local.actual_iso_url
   iso_checksum      = local.actual_iso_checksum
   output_directory  = "${var.output_directory}/${var.distribution}-${var.version}-${var.architecture}"
@@ -176,7 +176,7 @@ source "qemu" "fedora" {
 build {
   name = "${var.distribution}-${var.version}-${var.architecture}"
   
-  sources = ["source.qemu.fedora"]
+  sources = ["source.qemu.almalinux"]
 
   // Install Python and pip dependencies as root
   provisioner "shell" {
