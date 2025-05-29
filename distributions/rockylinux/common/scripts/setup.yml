@@ -1,9 +1,9 @@
 ---
-- name: Setup AlmaLinux for Vagrant
+- name: Setup RockyLinux for Vagrant
   hosts: all
   become: yes
   tasks:
-    - name: Install additional packages for AlmaLinux
+    - name: Install additional packages for RockyLinux
       dnf:
         name:
           - vim

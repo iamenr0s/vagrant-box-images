@@ -1,14 +1,14 @@
-// AlmaLinux Packer template for all versions
+// RockyLinux Packer template for all versions
 
 // Distribution variables
 variable "distribution" {
   type    = string
-  default = "almalinux"
+  default = "rockylinux"
 }
 
 variable "version" {
   type    = string
-  description = "AlmaLinux version (8, 9, etc.)"
+  description = "RockyLinux version (8, 9, etc.)"
 }
 
 variable "architecture" {
@@ -176,7 +176,7 @@ source "qemu" "fedora" {
 build {
   name = "${var.distribution}-${var.version}-${var.architecture}"
   
-  sources = ["source.qemu.fedora"]
+  sources = ["source.qemu.rockylinux"]
 
   // Install Python and pip dependencies as root
   provisioner "shell" {

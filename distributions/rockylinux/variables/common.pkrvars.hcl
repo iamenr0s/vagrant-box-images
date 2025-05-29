@@ -1,6 +1,6 @@
 // Common variables for all AlmaLinux versions
 
-distribution = "almalinux"
+distribution = "rockylinux"
 ssh_username = "vagrant"
 ssh_password = "vagrant"
 ssh_timeout = "120m"
