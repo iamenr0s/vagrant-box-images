@@ -2,6 +2,9 @@
 - name: Setup Debian for Vagrant
   hosts: all
   become: yes
+  environment:
+    DEBIAN_FRONTEND: noninteractive
+    DEBCONF_NONINTERACTIVE_SEEN: "true"
   tasks:
     - name: Update package cache
       apt:

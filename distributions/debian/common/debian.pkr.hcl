@@ -161,6 +161,10 @@ build {
   // Install Python and pip dependencies as root
   provisioner "shell" {
     execute_command = "echo 'vagrant' | {{.Vars}} sudo -S -E bash '{{.Path}}'"
+    environment_vars = [
+      "DEBIAN_FRONTEND=noninteractive",
+      "DEBCONF_NONINTERACTIVE_SEEN=true"
+    ]
     inline = [
       "apt-get update",
       "apt-get -y install python3 python3-pip python3-venv"
@@ -169,6 +173,9 @@ build {
   
   // Install Ansible as vagrant user
   provisioner "shell" {
+    environment_vars = [
+      "DEBIAN_FRONTEND=noninteractive"
+    ]
     inline = [
       "pip3 install --user --break-system-packages ansible",
       "echo 'export PATH=$HOME/.local/bin:$PATH' >> ~/.bashrc",
@@ -194,6 +201,13 @@ build {
     ]
     command = "$HOME/.local/bin/ansible-playbook"
     extra_arguments = ["-b", "-v"]
+    extra_arguments = [
+      "-e", "ansible_python_interpreter=/usr/bin/python3"
+    ]
+    environment_vars = [
+      "DEBIAN_FRONTEND=noninteractive",
+      "ANSIBLE_HOST_KEY_CHECKING=False"
+    ]
   }
 
   // Create Vagrant box
