@@ -205,7 +205,6 @@ build {
       "-v",
       "-e", "ansible_python_interpreter=/usr/bin/python3"
     ]
-
     environment_vars = [
       "DEBIAN_FRONTEND=noninteractive",
       "ANSIBLE_HOST_KEY_CHECKING=False"
