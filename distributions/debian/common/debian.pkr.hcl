@@ -200,10 +200,12 @@ build {
       "${path.cwd}/common/scripts/cleanup.yml"
     ]
     command = "$HOME/.local/bin/ansible-playbook"
-    extra_arguments = ["-b", "-v"]
     extra_arguments = [
+      "-b", 
+      "-v",
       "-e", "ansible_python_interpreter=/usr/bin/python3"
     ]
+
     environment_vars = [
       "DEBIAN_FRONTEND=noninteractive",
       "ANSIBLE_HOST_KEY_CHECKING=False"
