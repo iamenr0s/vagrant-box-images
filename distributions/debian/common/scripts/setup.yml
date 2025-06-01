@@ -23,11 +23,25 @@
           - python3-pip
         state: present
 
+    - name: Load VirtIO modules
+      modprobe:
+        name: "{{ item }}"
+        state: present
+      loop:
+        - virtio_balloon
+        - virtio_console
+        - virtio_rng
+      ignore_errors: yes
+
     - name: Enable qemu-guest-agent service
       systemd:
         name: qemu-guest-agent
         enabled: yes
         state: started
+      retries: 3
+      delay: 5
+      register: qemu_agent_result
+      until: qemu_agent_result is succeeded
 
     - name: Configure cloud-init for Vagrant
       copy:
