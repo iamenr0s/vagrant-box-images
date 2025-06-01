@@ -5,7 +5,7 @@ firstboot --disable
 keyboard --vckeymap=us --xlayouts='us'
 lang en_UK.UTF-8
 network --bootproto=dhcp --device=eth0 --ipv6=auto --activate
-network --hostname=fedora-"${version}".localdomain
+network --hostname=fedora-${version}.localdomain
 selinux --disabled
 timezone Europe/London --utc
 bootloader --location=mbr --append=" net.ifnames=0 biosdevname=0 crashkernel=no"

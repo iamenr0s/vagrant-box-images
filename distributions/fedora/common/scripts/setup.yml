@@ -26,6 +26,8 @@
       systemd:
         name: qemu-guest-agent
         enabled: yes
+        started: yes
+      ignore_errors: yes
 
     - name: Configure cloud-init for Vagrant
       copy:
