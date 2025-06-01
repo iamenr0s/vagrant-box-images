@@ -23,25 +23,19 @@
           - python3-pip
         state: present
 
-    - name: Load VirtIO modules
-      modprobe:
-        name: "{{ item }}"
-        state: present
-      loop:
-        - virtio_balloon
-        - virtio_console
-        - virtio_rng
-      ignore_errors: yes
+    - name: Check if running in QEMU/KVM
+      shell: dmidecode -s system-product-name 2>/dev/null || echo "unknown"
+      register: system_type
+      changed_when: false
+      failed_when: false
 
-    - name: Enable qemu-guest-agent service
+    - name: Enable qemu-guest-agent service (only in virtualized environment)
       systemd:
         name: qemu-guest-agent
         enabled: yes
         state: started
-      retries: 3
-      delay: 5
-      register: qemu_agent_result
-      until: qemu_agent_result is succeeded
+      when: "'QEMU' in system_type.stdout or 'KVM' in system_type.stdout"
+      ignore_errors: yes
 
     - name: Configure cloud-init for Vagrant
       copy:
