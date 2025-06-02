@@ -179,7 +179,7 @@ build {
   // Run Ubuntu-specific setup using Ansible
   provisioner "ansible-local" {
     playbook_files = [
-      "scripts/setup.yml"
+      "${path.root}/setup.yml"
     ]
     command = "$HOME/.local/bin/ansible-playbook"
     extra_arguments = ["-b", "-v"]
