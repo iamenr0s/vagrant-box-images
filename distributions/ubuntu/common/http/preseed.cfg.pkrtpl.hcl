@@ -2,6 +2,11 @@
 d-i debian-installer/locale string en_GB.UTF-8
 d-i console-setup/ask_detect boolean false
 d-i keyboard-configuration/layoutcode string us
+d-i keyboard-configuration/modelcode string pc105
+d-i keyboard-configuration/variantcode string
+d-i keyboard-configuration/optionscode string
+d-i keyboard-configuration/xkb-keymap select us
+d-i console-setup/detected note
 
 # Network configuration
 d-i netcfg/choose_interface select auto
