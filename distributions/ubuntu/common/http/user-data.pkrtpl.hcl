@@ -1,43 +1,37 @@
+
 #cloud-config
 autoinstall:
   version: 1
-  interactive-sections: []
-  
-  locale: en_US.UTF-8
-  
-  keyboard:
-    layout: us
-  
   identity:
     hostname: ubuntu-${version}
     username: vagrant
-    password: '$6$rounds=4096$saltsalt$L9tjczoIVP68LKlz5COoo5NP.4HBOjZOBY/FSHhHZrVfuY6NK.n3rOx6qX.T5tMh.VjfYGqnAb9nuZQhxpL5e1'
-  
+    password: $6$rounds=4096$saltsalt$L9tjczoIVP68LKlz5COoo5NP.4HBOjZOBY/FSHhHZrVfuY6NK.n3rOx6qX.T5tMh.VjfYGqnAb9nuZQhxpL5e1
+  user-data:
+    disable_root: false
+  keyboard:
+    layout: us
+  locale: en_US
+  network:
+    ethernets:
+      eth0:
+        dhcp4: true
+        dhcp-identifier: mac
+    version: 2
   ssh:
-    install-server: true
     allow-pw: true
-  
+    install-server: true
   storage:
     layout:
-      name: direct
-  
-  packages:
-    - openssh-server
-  
+      name: lvm
   late-commands:
-    - echo 'vagrant ALL=(ALL) NOPASSWD:ALL' > /target/etc/sudoers.d/vagrant
-    - chmod 440 /target/etc/sudoers.d/vagrant
-    - mkdir -p /target/home/vagrant/.ssh
-    - chmod 700 /target/home/vagrant/.ssh
-    - chown 1000:1000 /target/home/vagrant/.ssh
-    - 'DEBIAN_FRONTEND=noninteractive apt-get -y update'
-    - 'DEBIAN_FRONTEND=noninteractive apt-get -y upgrade'
-  
-  # Reporting configuration
-  reporting:
-    builtin:
-      type: print
-  
-  # Error commands
-  error-commands:
-    - /bin/true
+    - sed -i -e 's/^#\?PasswordAuthentication.*/PasswordAuthentication yes/g' /target/etc/ssh/sshd_config
+    - sed -i -e 's/^#\?PermitRootLogin.*/PermitRootLogin yes/g' /target/etc/ssh/sshd_config
+    - echo 'ubuntu ALL=(ALL) NOPASSWD:ALL' > /target/etc/sudoers.d/ubuntu
+    - sed -ie 's/GRUB_CMDLINE_LINUX=.*/GRUB_CMDLINE_LINUX="net.ifnames=0 ipv6.disable=1 biosdevname=0"/' /target/etc/default/grub
+    - curtin in-target --target /target update-grub2
+  packages:
+    - bc
+    - curl
+    - wget
+    - openssh-server
+#    - qemu-guest-agent
