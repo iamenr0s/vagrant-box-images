@@ -77,35 +77,54 @@ autoinstall:
     install-server: true
     allow-pw: true
   
-  # APT configuration to avoid mirror prompts
+  # APT configuration to avoid ALL prompts
   apt:
     preserve_sources_list: false
+    disable_components: []
+    geoip: false
     primary:
-      - arches: [amd64]
+      - arches: [amd64, i386]
         uri: http://archive.ubuntu.com/ubuntu
-      - arches: [arm64]
+      - arches: [arm64, armhf, powerpc, ppc64el, s390x]
         uri: http://ports.ubuntu.com/ubuntu-ports
     security:
-      - arches: [amd64]
+      - arches: [amd64, i386]
         uri: http://security.ubuntu.com/ubuntu
-      - arches: [arm64]
+      - arches: [arm64, armhf, powerpc, ppc64el, s390x]
         uri: http://ports.ubuntu.com/ubuntu-ports
-    sources:
-      ubuntu-archive:
-        source: "deb http://archive.ubuntu.com/ubuntu $RELEASE main restricted universe multiverse"
-      ubuntu-security:
-        source: "deb http://security.ubuntu.com/ubuntu $RELEASE-security main restricted universe multiverse"
-      ubuntu-updates:
-        source: "deb http://archive.ubuntu.com/ubuntu $RELEASE-updates main restricted universe multiverse"
+    sources_list: |
+      deb http://archive.ubuntu.com/ubuntu $RELEASE main restricted universe multiverse
+      deb http://archive.ubuntu.com/ubuntu $RELEASE-updates main restricted universe multiverse
+      deb http://security.ubuntu.com/ubuntu $RELEASE-security main restricted universe multiverse
+    conf: |
+      APT::Install-Recommends "false";
+      APT::Install-Suggests "false";
+      APT::Get::Assume-Yes "true";
+      Dpkg::Options {
+        "--force-confdef";
+        "--force-confold";
+      }
   
-  # Package installation
+  # Package installation - minimal set to avoid prompts
   packages:
     - openssh-server
     - python3
     - python3-pip
     - curl
     - wget
-    - vim
+  
+  # Snap configuration to avoid prompts
+  snaps:
+    - name: core
+      classic: false
+  
+  # User data to prevent any interactive prompts
+  user-data:
+    disable_root: false
+    ssh_pwauth: true
+    package_update: false
+    package_upgrade: false
+    package_reboot_if_required: false
   
   # Late commands for vagrant setup
   late-commands:
@@ -114,8 +133,21 @@ autoinstall:
     - mkdir -p /target/home/vagrant/.ssh
     - chmod 700 /target/home/vagrant/.ssh
     - chown 1000:1000 /target/home/vagrant/.ssh
+    - 'echo "Acquire::Check-Valid-Until false;" > /target/etc/apt/apt.conf.d/99no-check-valid-until'
+    - 'echo "APT::Get::Assume-Yes true;" >> /target/etc/apt/apt.conf.d/99no-prompts'
+    - 'echo "Dpkg::Options { \"--force-confdef\"; \"--force-confold\"; }" >> /target/etc/apt/apt.conf.d/99no-prompts'
   
-  # Ensure no interactive prompts
+  # Ensure no interactive prompts and automatic completion
   updates: security
   refresh-installer:
-    update: true
+    update: false
+    channel: stable
+  
+  # Autoinstall reporting to suppress prompts
+  reporting:
+    builtin:
+      type: print
+  
+  # Error handling to continue on errors
+  error-commands:
+    - /bin/true

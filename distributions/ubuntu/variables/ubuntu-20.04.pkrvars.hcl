@@ -26,9 +26,11 @@ boot_command = [
   "autoinstall ",
   "keyboard-configuration/xkb-keymap=us ",
   "debconf/frontend=noninteractive ",
+  "debconf/priority=critical ",
   "netcfg/choose_interface=auto ",
-  "netcfg/get_hostname=ubuntu-20.04 ",
+  "netcfg/get_hostname=ubuntu-${version} ",
   "netcfg/get_domain=localdomain ",
+  "DEBIAN_FRONTEND=noninteractive ",
   "ds=nocloud-net;s=http://{{ .HTTPIP }}:{{ .HTTPPort }}/ ",
   "<enter>"
 ]
