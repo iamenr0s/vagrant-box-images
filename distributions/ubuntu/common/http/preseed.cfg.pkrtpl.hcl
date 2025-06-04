@@ -8,6 +8,25 @@ d-i keyboard-configuration/optionscode string
 d-i keyboard-configuration/xkb-keymap select us
 d-i console-setup/detected note
 
+# Additional keyboard configuration to prevent prompts
+d-i console-keymaps-at/keymap select us
+d-i keyboard-configuration/toggle select No toggling
+d-i keyboard-configuration/switch select No temporary switch
+d-i keyboard-configuration/altgr select The default for the keyboard layout
+d-i keyboard-configuration/compose select No compose key
+d-i keyboard-configuration/ctrl_alt_bksp boolean false
+
+# Completely disable keyboard detection
+d-i console-setup/charmap47 select UTF-8
+d-i console-setup/codeset47 select # Latin1 and Latin5 - western Europe and Turkic languages
+d-i console-setup/fontface47 select Fixed
+d-i console-setup/fontsize-text47 select 16
+d-i console-setup/fontsize-fb47 select 16
+
+# Force non-interactive mode
+d-i debconf/frontend select noninteractive
+d-i debconf/priority select critical
+
 # Network configuration
 d-i netcfg/choose_interface select auto
 d-i netcfg/get_hostname string ubuntu-${version}
