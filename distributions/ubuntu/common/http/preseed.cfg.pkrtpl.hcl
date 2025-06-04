@@ -39,8 +39,13 @@ d-i mirror/country string manual
 d-i mirror/http/hostname string archive.ubuntu.com
 d-i mirror/http/directory string /ubuntu
 d-i mirror/http/proxy string
+d-i mirror/http/mirror select archive.ubuntu.com
+d-i mirror/suite string
+d-i mirror/udeb/suite string
+d-i mirror/codename string
+d-i mirror/udeb/codename string
 
-# APT configuration - Skip scanning additional media and external repos
+# APT configuration - Complete automation
 d-i apt-setup/cdrom/set-first boolean false
 d-i apt-setup/cdrom/set-next boolean false
 d-i apt-setup/cdrom/set-failed boolean false
@@ -48,6 +53,20 @@ d-i apt-setup/use_mirror boolean true
 d-i apt-setup/services-select multiselect none
 d-i apt-setup/security_host string
 d-i apt-setup/volatile_host string
+d-i apt-setup/restricted boolean false
+d-i apt-setup/universe boolean false
+d-i apt-setup/multiverse boolean false
+d-i apt-setup/backports boolean false
+d-i apt-setup/proposed boolean false
+d-i apt-setup/local0/repository string
+d-i apt-setup/local0/comment string
+d-i apt-setup/local0/source boolean false
+d-i apt-setup/local0/key string
+d-i apt-setup/non-free boolean false
+d-i apt-setup/contrib boolean false
+d-i apt-setup/enable-source-repositories boolean false
+d-i apt-setup/security-updates boolean true
+d-i apt-setup/partner boolean false
 
 # Account setup
 # Root password configuration
