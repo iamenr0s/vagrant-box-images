@@ -28,6 +28,9 @@ boot_command = [
   "debconf/frontend=noninteractive ",
   "keyboard-configuration/layoutcode=us ",
   "keyboard-configuration/modelcode=pc105 ",
+  "netcfg/choose_interface=auto ",
+  "netcfg/get_hostname=ubuntu-20.04 ",
+  "netcfg/get_domain=localdomain ",
   "file=/cdrom/preseed/ubuntu-server.seed ",
   "url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/preseed.cfg ",
   "<enter>"

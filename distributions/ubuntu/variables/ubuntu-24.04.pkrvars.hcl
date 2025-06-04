@@ -24,6 +24,11 @@ boot_command = [
   "/casper/vmlinuz ",
   "initrd=/casper/initrd ",
   "autoinstall ",
+  "keyboard-configuration/xkb-keymap=us ",
+  "debconf/frontend=noninteractive ",
+  "netcfg/choose_interface=auto ",
+  "netcfg/get_hostname=ubuntu-24.04 ",
+  "netcfg/get_domain=localdomain ",
   "ds=nocloud-net;s=http://{{ .HTTPIP }}:{{ .HTTPPort }}/ ",
   "<enter>"
 ]

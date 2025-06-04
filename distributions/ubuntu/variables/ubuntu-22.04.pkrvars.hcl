@@ -26,6 +26,9 @@ boot_command = [
   "autoinstall ",
   "keyboard-configuration/xkb-keymap=us ",
   "debconf/frontend=noninteractive ",
+  "netcfg/choose_interface=auto ",
+  "netcfg/get_hostname=ubuntu-22.04 ",
+  "netcfg/get_domain=localdomain ",
   "ds=nocloud-net;s=http://{{ .HTTPIP }}:{{ .HTTPPort }}/ ",
   "<enter>"
 ]
