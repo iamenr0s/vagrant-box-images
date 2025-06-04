@@ -79,6 +79,11 @@ d-i partman/choose_partition select finish
 d-i partman/confirm boolean true
 d-i partman/confirm_nooverwrite boolean true
 
+# Boot loader installation
+d-i grub-installer/only_debian boolean true
+d-i grub-installer/with_other_os boolean true
+d-i grub-installer/bootdev string default
+
 # Base system installation
 d-i base-installer/install-recommends boolean false
 d-i base-installer/kernel/image string linux-generic
