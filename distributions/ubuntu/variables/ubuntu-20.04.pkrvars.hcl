@@ -11,30 +11,11 @@ arm64_iso_url = "https://cdimage.ubuntu.com/releases/20.04/release/ubuntu-20.04.
 arm64_iso_checksum = "sha256:4737ec8c4f3c8c1b5e2b3e3e4b3e3e4b3e3e4b3e3e4b3e3e4b3e3e4b3e3e4b3e"
 
 boot_command = [
-  "<enter><wait><f6><wait><esc><wait>",
-  "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
-  "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
-  "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
-  "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
-  "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
-  "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
-  "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
-  "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
-  "<bs><bs><bs>",
+  "<wait><wait><wait><esc><wait><wait><wait>",
   "/casper/vmlinuz ",
   "initrd=/casper/initrd ",
   "autoinstall ",
+  "ds=nocloud-net;s=http://{{ .HTTPIP }}:{{ .HTTPPort }}/ ",
   "quiet ",
-  "splash ",
-  "fsck.mode=skip ",
-  "keyboard-configuration/xkb-keymap=us ",
-  "debconf/frontend=noninteractive ",
-  "debconf/priority=critical ",
-  "DEBIAN_FRONTEND=noninteractive ",
-  "netcfg/choose_interface=auto ",
-  "netcfg/get_hostname=ubuntu-20.04 ",
-  "netcfg/get_domain=localdomain ",
-  "cloud-config-url=/dev/null ",
-  "ds=nocloud-net\\;s=http://{{ .HTTPIP }}:{{ .HTTPPort }}/ ",
-  "<enter>"
+  "---<enter><wait>"
 ]

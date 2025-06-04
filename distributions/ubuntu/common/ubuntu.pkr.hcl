@@ -140,7 +140,9 @@ source "qemu" "ubuntu" {
   vm_name           = "${var.distribution}-${var.version}-${var.architecture}.qcow2"
   net_device        = "virtio-net"
   disk_interface    = "virtio"
-  boot_wait         = "20s"
+  # In the qemu builder section
+  boot_wait = "10s"
+  ssh_timeout = "30m"
   boot_command      = var.boot_command
   qemu_binary       = var.qemu_binary
   headless          = var.headless
