@@ -25,6 +25,9 @@ boot_command = [
   "initrd=/install/initrd.gz ",
   "priority=critical ",
   "locale=en_GB ",
+  "debconf/frontend=noninteractive ",
+  "keyboard-configuration/layoutcode=us ",
+  "keyboard-configuration/modelcode=pc105 ",
   "file=/cdrom/preseed/ubuntu-server.seed ",
   "url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/preseed.cfg ",
   "<enter>"

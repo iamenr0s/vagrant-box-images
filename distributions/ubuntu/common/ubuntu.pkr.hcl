@@ -149,6 +149,12 @@ source "qemu" "ubuntu" {
     "/preseed.cfg" = templatefile("http/preseed.cfg.pkrtpl.hcl", {
       version = var.version
     })
+    "/user-data" = templatefile("http/user-data.pkrtpl.hcl", {
+      version = var.version
+    })
+    "/meta-data" = templatefile("http/meta-data.pkrtpl.hcl", {
+      version = var.version
+    })
   }
 }
 
