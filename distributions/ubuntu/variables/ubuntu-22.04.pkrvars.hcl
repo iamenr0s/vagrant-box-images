@@ -24,6 +24,8 @@ boot_command = [
   "/casper/vmlinuz ",
   "initrd=/casper/initrd ",
   "autoinstall ",
+  "keyboard-configuration/xkb-keymap=us ",
+  "debconf/frontend=noninteractive ",
   "ds=nocloud-net;s=http://{{ .HTTPIP }}:{{ .HTTPPort }}/ ",
   "<enter>"
 ]
