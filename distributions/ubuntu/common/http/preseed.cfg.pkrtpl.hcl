@@ -40,10 +40,24 @@ d-i mirror/http/hostname string archive.ubuntu.com
 d-i mirror/http/directory string /ubuntu
 d-i mirror/http/proxy string
 d-i mirror/http/mirror select archive.ubuntu.com
-d-i mirror/suite string
-d-i mirror/udeb/suite string
-d-i mirror/codename string
-d-i mirror/udeb/codename string
+
+# Version-specific suite and codename (use template variable)
+{% if version == "20.04" %}
+d-i mirror/suite string focal
+d-i mirror/udeb/suite string focal
+d-i mirror/codename string focal
+d-i mirror/udeb/codename string focal
+{% elif version == "22.04" %}
+d-i mirror/suite string jammy
+d-i mirror/udeb/suite string jammy
+d-i mirror/codename string jammy
+d-i mirror/udeb/codename string jammy
+{% elif version == "24.04" %}
+d-i mirror/suite string noble
+d-i mirror/udeb/suite string noble
+d-i mirror/codename string noble
+d-i mirror/udeb/codename string noble
+{% endif %}
 
 # APT configuration - Complete automation
 d-i apt-setup/cdrom/set-first boolean false
@@ -51,10 +65,10 @@ d-i apt-setup/cdrom/set-next boolean false
 d-i apt-setup/cdrom/set-failed boolean false
 d-i apt-setup/use_mirror boolean true
 d-i apt-setup/services-select multiselect none
-d-i apt-setup/security_host string
+d-i apt-setup/security_host string security.ubuntu.com
 d-i apt-setup/volatile_host string
-d-i apt-setup/restricted boolean false
-d-i apt-setup/universe boolean false
+d-i apt-setup/restricted boolean true
+d-i apt-setup/universe boolean true
 d-i apt-setup/multiverse boolean false
 d-i apt-setup/backports boolean false
 d-i apt-setup/proposed boolean false
@@ -62,8 +76,6 @@ d-i apt-setup/local0/repository string
 d-i apt-setup/local0/comment string
 d-i apt-setup/local0/source boolean false
 d-i apt-setup/local0/key string
-d-i apt-setup/non-free boolean false
-d-i apt-setup/contrib boolean false
 d-i apt-setup/enable-source-repositories boolean false
 d-i apt-setup/security-updates boolean true
 d-i apt-setup/partner boolean false
