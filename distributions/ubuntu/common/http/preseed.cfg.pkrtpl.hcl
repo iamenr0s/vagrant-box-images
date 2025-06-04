@@ -1,4 +1,4 @@
-# Ubuntu preseed configuration
+# Ubuntu Server Preseed Configuration
 d-i debian-installer/locale string en_GB.UTF-8
 d-i console-setup/ask_detect boolean false
 d-i keyboard-configuration/layoutcode string us
@@ -26,6 +26,8 @@ d-i console-setup/fontsize-fb47 select 16
 # Force non-interactive mode
 d-i debconf/frontend select noninteractive
 d-i debconf/priority select critical
+d-i auto-install/enable boolean true
+d-i preseed/interactive boolean false
 
 # Network configuration
 d-i netcfg/choose_interface select auto
@@ -66,7 +68,13 @@ d-i clock-setup/utc boolean true
 d-i time/zone string Europe/London
 d-i clock-setup/ntp boolean true
 
-# Partitioning
+# Partitioning - Enhanced configuration
+d-i partman-auto/disk string /dev/sda
+d-i partman-auto/init_automatically_partition select biggest_free
+d-i partman-basicfilesystems/choose_label boolean false
+d-i partman-basicfilesystems/default_label string gpt
+d-i partman/default_filesystem string ext4
+d-i partman/mount_style select uuid
 d-i partman-auto/method string lvm
 d-i partman-lvm/device_remove_lvm boolean true
 d-i partman-md/device_remove_md boolean true
@@ -78,11 +86,13 @@ d-i partman-partitioning/confirm_write_new_label boolean true
 d-i partman/choose_partition select finish
 d-i partman/confirm boolean true
 d-i partman/confirm_nooverwrite boolean true
-
-# Boot loader installation
-d-i grub-installer/only_debian boolean true
-d-i grub-installer/with_other_os boolean true
-d-i grub-installer/bootdev string default
+d-i partman-partitioning/no_bootable_gpt_biosgrub boolean false
+d-i partman-partitioning/no_bootable_gpt_efi boolean false
+d-i partman-efi/non_efi_system boolean true
+d-i partman/alignment select optimal
+d-i partman-auto/purge_lvm_from_device boolean true
+d-i partman-lvm/vgdelete_confirm boolean true
+d-i partman-lvm/device_remove_lvm_span boolean true
 
 # Base system installation
 d-i base-installer/install-recommends boolean false
