@@ -7,6 +7,11 @@ autoinstall:
   refresh-installer:
     update: false
   
+  # Source configuration - critical for preventing prompts
+  source:
+    search_drivers: false
+    id: ubuntu-server-minimal
+  
   # Locale configuration
   locale: en_US.UTF-8
   
@@ -27,64 +32,11 @@ autoinstall:
         enp0s3:
           dhcp4: true
   
-  # Explicit storage configuration to prevent prompts
+  # Explicit storage configuration with layout name
   storage:
-    config:
-      - type: disk
-        id: disk0
-        match:
-          size: largest
-        wipe: superblock-recursive
-        preserve: false
-        grub_device: false
-      - type: partition
-        id: boot-partition
-        device: disk0
-        size: 1G
-        wipe: superblock
-        flag: boot
-        number: 1
-        preserve: false
-        grub_device: true
-      - type: partition
-        id: lvm-partition
-        device: disk0
-        size: -1
-        wipe: superblock
-        flag: ""
-        number: 2
-        preserve: false
-      - type: lvm_volgroup
-        id: ubuntu-vg
-        name: ubuntu-vg
-        devices:
-          - lvm-partition
-        preserve: false
-      - type: lvm_partition
-        id: root-lv
-        name: ubuntu-lv
-        volgroup: ubuntu-vg
-        size: -1
-        wipe: superblock
-        preserve: false
-      - type: format
-        id: boot-fs
-        volume: boot-partition
-        fstype: ext4
-        preserve: false
-      - type: format
-        id: root-fs
-        volume: root-lv
-        fstype: ext4
-        preserve: false
-      - type: mount
-        id: boot-mount
-        device: boot-fs
-        path: /boot
-      - type: mount
-        id: root-mount
-        device: root-fs
-        path: /
+    layout:
+      name: direct
+      sizing-policy: scaled
     swap:
       size: 0
   
@@ -98,14 +50,53 @@ autoinstall:
   ssh:
     install-server: true
     allow-pw: true
+    authorized-keys: []
   
-  # Package selection
+  # APT configuration - critical for preventing mirror prompts
+  apt:
+    preserve_sources_list: false
+    primary:
+      - arches: [amd64, i386]
+        uri: http://archive.ubuntu.com/ubuntu
+      - arches: [default]
+        uri: http://ports.ubuntu.com/ubuntu-ports
+    security:
+      - arches: [amd64, i386]
+        uri: http://security.ubuntu.com/ubuntu
+      - arches: [default]
+        uri: http://ports.ubuntu.com/ubuntu-ports
+    sources:
+      ubuntu-toolchain-r-test:
+        source: "deb http://archive.ubuntu.com/ubuntu $RELEASE main restricted universe multiverse"
+        key: |
+          -----BEGIN PGP PUBLIC KEY BLOCK-----
+          
+          mQINBFufwdoBEADkqnxzIEtMFYvzqLpTBTpQTquGCoVWCYNKwKoKe0G6mEs7CKNG
+          ...
+          -----END PGP PUBLIC KEY BLOCK-----
+    geoip: false
+    disable_components: []
+    
+  # Package selection - explicit minimal set
   packages:
     - openssh-server
     - python3
     - python3-pip
+    - curl
+    - wget
   
-  # Updates
+  # Snap configuration - disable to prevent prompts
+  snaps:
+    - name: core
+      channel: stable
+      classic: false
+  
+  # User data
+  user-data:
+    disable_root: true
+    preserve_hostname: false
+  
+  # Updates configuration
   updates: security
   
   # Late commands
@@ -116,8 +107,9 @@ autoinstall:
     - chmod 700 /target/home/vagrant/.ssh
     - chown 1000:1000 /target/home/vagrant/.ssh
     - 'DEBIAN_FRONTEND=noninteractive apt-get -y update'
+    - 'DEBIAN_FRONTEND=noninteractive apt-get -y upgrade'
   
-  # Reporting configuration to suppress prompts
+  # Reporting configuration
   reporting:
     builtin:
       type: print
