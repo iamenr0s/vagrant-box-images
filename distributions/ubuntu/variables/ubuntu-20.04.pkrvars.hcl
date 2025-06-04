@@ -16,6 +16,5 @@ boot_command = [
   "initrd=/casper/initrd ",
   "autoinstall ",
   "ds=nocloud-net;s=http://{{ .HTTPIP }}:{{ .HTTPPort }}/ ",
-  "quiet ",
   "---<enter><wait>"
 ]

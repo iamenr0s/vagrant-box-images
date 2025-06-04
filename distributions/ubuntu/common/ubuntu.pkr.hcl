@@ -142,7 +142,6 @@ source "qemu" "ubuntu" {
   disk_interface    = "virtio"
   # In the qemu builder section
   boot_wait = "10s"
-  ssh_timeout = "30m"
   boot_command      = var.boot_command
   qemu_binary       = var.qemu_binary
   headless          = var.headless
