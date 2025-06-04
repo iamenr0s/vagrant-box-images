@@ -146,9 +146,6 @@ source "qemu" "ubuntu" {
   headless          = var.headless
   qemuargs          = var.qemu_args
   http_content = {
-    "/preseed.cfg" = templatefile("http/preseed.cfg.pkrtpl.hcl", {
-      version = var.version
-    })
     "/user-data" = templatefile("http/user-data.pkrtpl.hcl", {
       version = var.version
     })
