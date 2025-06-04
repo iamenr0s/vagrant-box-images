@@ -25,9 +25,8 @@ boot_command = [
   "initrd=/casper/initrd ",
   "autoinstall ",
   "quiet ",
-  "systemd.mask=tmp.mount ",
+  "splash ",
   "fsck.mode=skip ",
-  "oem-config/enable=false ",
   "keyboard-configuration/xkb-keymap=us ",
   "debconf/frontend=noninteractive ",
   "debconf/priority=critical ",
@@ -35,6 +34,7 @@ boot_command = [
   "netcfg/choose_interface=auto ",
   "netcfg/get_hostname=ubuntu-20.04 ",
   "netcfg/get_domain=localdomain ",
+  "cloud-config-url=/dev/null ",
   "ds=nocloud-net\\;s=http://{{ .HTTPIP }}:{{ .HTTPPort }}/ ",
   "<enter>"
 ]

@@ -3,10 +3,9 @@ autoinstall:
   version: 1
   interactive-sections: []
   
-  # Refresh installer to avoid prompts
+  # Refresh installer
   refresh-installer:
     update: false
-    channel: "stable/ubuntu-${version}"
   
   # Locale configuration
   locale: en_US.UTF-8
@@ -15,7 +14,6 @@ autoinstall:
   keyboard:
     layout: us
     variant: ""
-    toggle: null
   
   # Network configuration
   network:
@@ -29,17 +27,64 @@ autoinstall:
         enp0s3:
           dhcp4: true
   
-  # Source configuration to avoid prompts
-  source:
-    search_drivers: false
-    id: ubuntu-server-minimal
-  
-  # Storage configuration
+  # Explicit storage configuration to prevent prompts
   storage:
-    layout:
-      name: lvm
-      match:
-        size: largest
+    config:
+      - type: disk
+        id: disk0
+        match:
+          size: largest
+        wipe: superblock-recursive
+        preserve: false
+        grub_device: false
+      - type: partition
+        id: boot-partition
+        device: disk0
+        size: 1G
+        wipe: superblock
+        flag: boot
+        number: 1
+        preserve: false
+        grub_device: true
+      - type: partition
+        id: lvm-partition
+        device: disk0
+        size: -1
+        wipe: superblock
+        flag: ""
+        number: 2
+        preserve: false
+      - type: lvm_volgroup
+        id: ubuntu-vg
+        name: ubuntu-vg
+        devices:
+          - lvm-partition
+        preserve: false
+      - type: lvm_partition
+        id: root-lv
+        name: ubuntu-lv
+        volgroup: ubuntu-vg
+        size: -1
+        wipe: superblock
+        preserve: false
+      - type: format
+        id: boot-fs
+        volume: boot-partition
+        fstype: ext4
+        preserve: false
+      - type: format
+        id: root-fs
+        volume: root-lv
+        fstype: ext4
+        preserve: false
+      - type: mount
+        id: boot-mount
+        device: boot-fs
+        path: /boot
+      - type: mount
+        id: root-mount
+        device: root-fs
+        path: /
     swap:
       size: 0
   
@@ -54,30 +99,16 @@ autoinstall:
     install-server: true
     allow-pw: true
   
-  # APT configuration to prevent all prompts
-  apt:
-    preserve_sources_list: false
-    disable_components: []
-    geoip: false
-    sources:
-      ubuntu.sources:
-        source: |
-          Types: deb
-          URIs: http://archive.ubuntu.com/ubuntu
-          Suites: $RELEASE $RELEASE-updates $RELEASE-security
-          Components: main restricted universe multiverse
-          Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg
-  
-  # Package selection - minimal to avoid prompts
+  # Package selection
   packages:
     - openssh-server
     - python3
     - python3-pip
   
-  # Updates configuration
+  # Updates
   updates: security
   
-  # Late commands for vagrant setup
+  # Late commands
   late-commands:
     - echo 'vagrant ALL=(ALL) NOPASSWD:ALL' > /target/etc/sudoers.d/vagrant
     - chmod 440 /target/etc/sudoers.d/vagrant
