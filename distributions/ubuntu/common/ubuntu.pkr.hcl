@@ -146,13 +146,7 @@ source "qemu" "ubuntu" {
   qemu_binary       = var.qemu_binary
   headless          = var.headless
   qemuargs          = var.qemu_args
-  
-  # Version-specific http_content
-  http_content = contains(["18.04", "20.04"], var.version) ? {
-    "/preseed.cfg" = templatefile("http/preseed.cfg.pkrtpl.hcl", {
-      version = var.version
-    })
-  } : {
+  http_content = {
     "/user-data" = templatefile("http/user-data.pkrtpl.hcl", {
       version = var.version
     })
