@@ -23,6 +23,10 @@ autoinstall:
   storage:
     layout:
       name: lvm
+      sizing-policy: scaled
+      reset-partition-table: true
+    swap:
+      size: 0
   late-commands:
     - sed -i -e 's/^#\?PasswordAuthentication.*/PasswordAuthentication yes/g' /target/etc/ssh/sshd_config
     - sed -i -e 's/^#\?PermitRootLogin.*/PermitRootLogin yes/g' /target/etc/ssh/sshd_config
