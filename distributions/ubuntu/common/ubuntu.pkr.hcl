@@ -174,7 +174,7 @@ build {
   // Install Ansible as vagrant user
   provisioner "shell" {
     inline = [
-      "pip3 install --user ansible",
+      "if pip3 install --help | grep -q 'break-system-packages'; then pip3 install --user --break-system-packages ansible; else pip3 install --user ansible; fi",
       "echo 'export PATH=$HOME/.local/bin:$PATH' >> ~/.bashrc",
       "export PATH=$HOME/.local/bin:$PATH"
     ]
