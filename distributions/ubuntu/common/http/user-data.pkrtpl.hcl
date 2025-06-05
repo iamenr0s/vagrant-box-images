@@ -3,9 +3,9 @@
 autoinstall:
   version: 1
   identity:
-    hostname: ubuntu-${version}
+    hostname: ubuntu
     username: vagrant
-    password: $6$rounds=4096$saltsalt$L9tjczoIVP68LKlz5COoo5NP.4HBOjZOBY/FSHhHZrVfuY6NK.n3rOx6qX.T5tMh.VjfYGqnAb9nuZQhxpL5e1
+    password: $6$vshRxzaB0gSkSGVq$fru9FpuDT8PJlRTESOQx.xteyJv8U1nuuMPGOz9LQKFDJYfMB2EzIfg4p0NiPTaShyLMzqsvTPGTHkL2huZ3h.
   user-data:
     disable_root: false
   keyboard:
