@@ -146,26 +146,19 @@ source "qemu" "ubuntu" {
   qemu_binary       = var.qemu_binary
   headless          = var.headless
   qemuargs          = var.qemu_args
-  # Version-specific http_content
-  dynamic "http_content" {
-    for_each = contains(["18.04", "20.04"], var.version) ? [1] : []
-    content {
-      "/preseed.cfg" = templatefile("http/preseed.cfg.pkrtpl.hcl", {
-        version = var.version
-      })
-    }
-  }
   
-  dynamic "http_content" {
-    for_each = contains(["22.04", "24.04"], var.version) ? [1] : []
-    content {
-      "/user-data" = templatefile("http/user-data.pkrtpl.hcl", {
-        version = var.version
-      })
-      "/meta-data" = templatefile("http/meta-data.pkrtpl.hcl", {
-        version = var.version
-      })
-    }
+  # Version-specific http_content
+  http_content = contains(["18.04", "20.04"], var.version) ? {
+    "/preseed.cfg" = templatefile("http/preseed.cfg.pkrtpl.hcl", {
+      version = var.version
+    })
+  } : {
+    "/user-data" = templatefile("http/user-data.pkrtpl.hcl", {
+      version = var.version
+    })
+    "/meta-data" = templatefile("http/meta-data.pkrtpl.hcl", {
+      version = var.version
+    })
   }
 }
 
