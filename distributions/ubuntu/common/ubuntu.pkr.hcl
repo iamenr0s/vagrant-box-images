@@ -148,8 +148,10 @@ source "qemu" "ubuntu" {
   qemuargs          = var.qemu_args
   http_content = {
     "/user-data" = templatefile("http/user-data.pkrtpl.hcl", {
+      version = var.version
     })
     "/meta-data" = templatefile("http/meta-data.pkrtpl.hcl", {
+      version = var.version
     })
   }
 }
