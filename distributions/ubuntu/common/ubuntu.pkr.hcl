@@ -150,10 +150,10 @@ source "qemu" "ubuntu" {
   headless          = var.headless
   qemuargs          = var.qemu_args
   http_content = {
-    "/user-data" = templatefile("${path.root}/distributions/ubuntu/common/http/user-data.pkrtpl.hcl", {
+    "/user-data" = templatefile("http/user-data.pkrtpl.hcl", {
       version = var.version
     })
-    "/meta-data" = templatefile("${path.root}/distributions/ubuntu/common/http/meta-data.pkrtpl.hcl", {
+    "/meta-data" = templatefile("http/meta-data.pkrtpl.hcl", {
       version = var.version
     })
   }
