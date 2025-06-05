@@ -132,6 +132,10 @@ source "qemu" "ubuntu" {
   output_directory  = "${var.output_directory}/${var.distribution}-${var.version}-${var.architecture}"
   shutdown_command  = "echo 'vagrant' | sudo -S shutdown -P now"
   disk_size         = var.disk_size
+  disk_cache        = "none"
+  disk_compression  = true
+  disk_discard      = "unmap"  
+  disk_interface    = "virtio"
   format            = "qcow2"
   accelerator       = "kvm"
   ssh_username      = var.ssh_username
@@ -139,7 +143,6 @@ source "qemu" "ubuntu" {
   ssh_timeout       = var.ssh_timeout
   vm_name           = "${var.distribution}-${var.version}-${var.architecture}.qcow2"
   net_device        = "virtio-net"
-  disk_interface    = "virtio"
   # In the qemu builder section
   boot_wait = "10s"
   boot_command      = var.boot_command
