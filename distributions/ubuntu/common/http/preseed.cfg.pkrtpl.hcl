@@ -99,19 +99,9 @@ d-i clock-setup/utc boolean true
 d-i time/zone string Europe/London
 d-i clock-setup/ntp boolean true
 
-# Partitioning - Enhanced configuration
+# Partitioning - Simplified configuration for Ubuntu 20.04
 d-i partman-auto/disk string /dev/sda
-d-i partman-auto/init_automatically_partition select biggest_free
-d-i partman-basicfilesystems/choose_label boolean false
-d-i partman-basicfilesystems/default_label string gpt
-d-i partman/default_filesystem string ext4
-d-i partman/mount_style select uuid
-d-i partman-auto/method string lvm
-d-i partman-lvm/device_remove_lvm boolean true
-d-i partman-md/device_remove_md boolean true
-d-i partman-lvm/confirm boolean true
-d-i partman-lvm/confirm_nooverwrite boolean true
-d-i partman-auto-lvm/guided_size string max
+d-i partman-auto/method string regular
 d-i partman-auto/choose_recipe select atomic
 d-i partman-partitioning/confirm_write_new_label boolean true
 d-i partman/choose_partition select finish
