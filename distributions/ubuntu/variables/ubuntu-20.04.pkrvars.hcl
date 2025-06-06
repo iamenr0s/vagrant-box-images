@@ -10,5 +10,21 @@ x86_64_iso_checksum = "sha256:b8f31413336b9393ad5d8ef0282717b2ab19f007df2e9ed519
 arm64_iso_url = "https://cdimage.ubuntu.com/releases/20.04/release/ubuntu-20.04.6-live-server-arm64.iso"
 arm64_iso_checksum = "sha256:4737ec8c4f3c8c1b5e2b3e3e4b3e3e4b3e3e4b3e3e4b3e3e4b3e3e4b3e3e4b3e"
 
-#boot_command = ["c<wait>linux /casper/vmlinuz --- autoinstall ds=\"nocloud;s=http://{{ .HTTPIP }}:{{ .HTTPPort }}/\"<enter><wait>", "initrd /casper/initrd<enter><wait>", "boot<enter><wait>"]
-boot_command = ["<enter><enter><f6><esc><wait>", "<bs><bs><bs><bs>", "autoinstall net.ifnames=0 biosdevname=0 ip=dhcp ipv6.disable=1 ds=nocloud-net;s=http://{{ .HTTPIP }}:{{ .HTTPPort }}/ ", "--- <enter>"]
+boot_command = [
+  "<enter><wait><f6><wait><esc><wait>",
+  "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+  "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+  "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+  "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+  "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+  "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+  "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+  "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+  "<bs><bs><bs>",
+  "/install/vmlinuz ",
+  "initrd=/install/initrd.gz ",
+  "priority=critical ",
+  "locale=en_US ",
+  "preseed/url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/preseed.cfg ",
+  "<enter>"
+]
