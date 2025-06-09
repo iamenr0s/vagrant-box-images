@@ -14,6 +14,18 @@ packer {
     }
   }
 }
+// HCP/Vagrant Registry variables
+variable "hcp_username" {
+  type        = string
+  description = "HCP username or organization name for box publishing"
+  default     = ""
+}
+
+variable "box_version" {
+  type        = string
+  description = "Version number for the Vagrant box"
+  default     = "1.0.0"
+}
 
 // Distribution variables
 variable "distribution" {
@@ -231,11 +243,15 @@ build {
 
   // Create Vagrant box
   post-processor "vagrant" {
-    output_template = "${var.output_directory}/${var.distribution}-${var.version}-${var.architecture}.box"
+    output = "${var.output_directory}/${var.distribution}-${var.version}-${var.architecture}.box"
   }
   
   post-processor "vagrant-registry" {
-    box_tag = "${var.vagrant_cloud_username}/${var.distribution}-${var.version}-${var.architecture}"
+    box_tag = "${var.hcp_username}/${var.distribution}-${var.version}-${var.architecture}"
+    version = "${var.box_version}"
+    architecture = "${var.architecture}"
+    version_description = "Built on {{ timestamp }}"
+  }
     version = "${var.box_version}"
     architecture = "${var.architecture}"
     version_description = "Built on {{ timestamp }} from commit ${var.git_commit}"
@@ -243,3 +259,4 @@ build {
     client_secret = "${var.hcp_client_secret}"
   }  
 }
+

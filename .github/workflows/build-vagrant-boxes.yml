@@ -160,14 +160,8 @@ jobs:
         run: |
           # Initialize Packer plugins
           packer init distributions/${{ matrix.distribution }}/common/${{ matrix.distribution }}.pkr.hcl
-      
-          # Build command
-          packer build \
-            -var-file=distributions/${{ matrix.distribution }}/variables/common.pkrvars.hcl \
-            -var-file=distributions/${{ matrix.distribution }}/variables/arch-${{ matrix.architecture }}.pkrvars.hcl \
-            -var-file=distributions/${{ matrix.distribution }}/variables/${{ matrix.distribution }}-${{ matrix.version }}.pkrvars.hcl \
-            distributions/${{ matrix.distribution }}/common/${{ matrix.distribution }}.pkr.hcl
-      
+     
+     
       - name: Set box information
         id: box-info
         run: |
@@ -188,12 +182,19 @@ jobs:
       
       - name: Validate Packer Templates
         run: |
+          # In the build step, add:
           packer validate \
+            -var="registry_name=${{ secrets.HCP_REGISTRY_NAME }}" \
+            -var="hcp_client_id=${{ secrets.HCP_CLIENT_ID }}" \
+            -var="hcp_client_secret=${{ secrets.HCP_CLIENT_SECRET }}" \
+            -var="box_name=${{ matrix.distribution }}-${{ matrix.version }}-${{ matrix.architecture }}" \
+            -var="box_version=${{ github.run_number }}" \
             -var-file=distributions/${{ matrix.distribution }}/variables/common.pkrvars.hcl \
             -var-file=distributions/${{ matrix.distribution }}/variables/arch-${{ matrix.architecture }}.pkrvars.hcl \
             -var-file=distributions/${{ matrix.distribution }}/variables/${{ matrix.distribution }}-${{ matrix.version }}.pkrvars.hcl \
-            distributions/${{ matrix.distribution }}/common/${{ matrix.distribution }}.pkr.hcl
-      
+            distributions/${{ matrix.distribution }}/common/${{ matrix.distribution }}.pkr.hcl     
+
+
       - name: Build Vagrant Box - ${{ matrix.target }}
         run: |
           # Enable KVM for current user session
@@ -203,7 +204,16 @@ jobs:
           mkdir -p "output/${{ matrix.distribution }}-${{ matrix.version }}-${{ matrix.architecture }}"
           
           # Build using make target with verbose output
-          make ${{ matrix.target }} || {
+          packer validate \
+            -var="registry_name=${{ secrets.HCP_REGISTRY_NAME }}" \
+            -var="hcp_client_id=${{ secrets.HCP_CLIENT_ID }}" \
+            -var="hcp_client_secret=${{ secrets.HCP_CLIENT_SECRET }}" \
+            -var="box_name=${{ matrix.distribution }}-${{ matrix.version }}-${{ matrix.architecture }}" \
+            -var="box_version=${{ github.run_number }}" \
+            -var-file=distributions/${{ matrix.distribution }}/variables/common.pkrvars.hcl \
+            -var-file=distributions/${{ matrix.distribution }}/variables/arch-${{ matrix.architecture }}.pkrvars.hcl \
+            -var-file=distributions/${{ matrix.distribution }}/variables/${{ matrix.distribution }}-${{ matrix.version }}.pkrvars.hcl \
+            distributions/${{ matrix.distribution }}/common/${{ matrix.distribution }}.pkr.hcl  || {
             echo "Build failed. Checking for any partial output..."
             find . -name "*.box" -o -name "*.qcow2" | head -10
             ls -la output/ || echo "No output directory created"
