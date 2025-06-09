@@ -1,0 +1,274 @@
+name: Build and Publish Vagrant Box Images
+
+on:
+  push:
+    branches: [ main, master ]
+    paths:
+      - 'distributions/**'
+      - 'common/**'
+      - 'Makefile'
+      - '.github/workflows/**'
+  pull_request:
+    branches: [ main, master ]
+    paths:
+      - 'distributions/**'
+      - 'common/**'
+      - 'Makefile'
+  schedule:
+    # Build weekly on Sundays at 2 AM UTC
+    - cron: '0 2 * * 0'
+  workflow_dispatch:
+    inputs:
+      distribution:
+        description: 'Distribution to build (all, fedora, almalinux, rockylinux, ubuntu, debian)'
+        required: false
+        default: 'all'
+        type: choice
+        options:
+          - all
+          - fedora
+          - almalinux
+          - rockylinux
+          - ubuntu
+          - debian
+      architecture:
+        description: 'Architecture to build (all, x86_64, arm64)'
+        required: false
+        default: 'all'
+        type: choice
+        options:
+          - all
+          - x86_64
+          - arm64
+      publish_to_cloud:
+        description: 'Publish to Vagrant Cloud'
+        required: false
+        default: false
+        type: boolean
+
+env:
+  PACKER_VERSION: "1.10.0"
+  VAGRANT_CLOUD_ORG: "your-org-name"  # Change this to your Vagrant Cloud organization
+
+jobs:
+  # Matrix strategy to build different combinations
+  build-matrix:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+      
+      - name: Set build matrix
+        id: set-matrix
+        run: |
+          # Define the full matrix
+          DISTRIBUTIONS=("fedora" "almalinux" "rockylinux" "ubuntu" "debian")
+          VERSIONS_fedora=("40" "41" "42")
+          VERSIONS_almalinux=("8" "9" "10")
+          VERSIONS_rockylinux=("8" "9")
+          VERSIONS_ubuntu=("20.04" "22.04" "24.04")
+          VERSIONS_debian=("11" "12")
+          ARCHITECTURES=("x86_64" "arm64")
+          
+          # Filter based on inputs
+          DIST_FILTER="${{ github.event.inputs.distribution || 'all' }}"
+          ARCH_FILTER="${{ github.event.inputs.architecture || 'all' }}"
+          
+          matrix="[]"
+          
+          for dist in "${DISTRIBUTIONS[@]}"; do
+            if [[ "$DIST_FILTER" != "all" && "$DIST_FILTER" != "$dist" ]]; then
+              continue
+            fi
+            
+            eval "versions=(\"\${VERSIONS_${dist}[@]}\")"
+            
+            for version in "${versions[@]}"; do
+              for arch in "${ARCHITECTURES[@]}"; do
+                if [[ "$ARCH_FILTER" != "all" && "$ARCH_FILTER" != "$arch" ]]; then
+                  continue
+                fi
+                
+                target="${dist}-${version}-${arch}"
+                matrix=$(echo "$matrix" | jq --arg target "$target" --arg dist "$dist" --arg version "$version" --arg arch "$arch" '. + [{"target": $target, "distribution": $dist, "version": $version, "architecture": $arch}]')
+              done
+            done
+          done
+          
+          echo "matrix=$matrix" >> $GITHUB_OUTPUT
+          echo "Generated matrix: $matrix"
+
+  build:
+    needs: build-matrix
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      max-parallel: 3  # Limit concurrent builds to avoid resource exhaustion
+      matrix:
+        include: ${{ fromJson(needs.build-matrix.outputs.matrix) }}
+    
+    outputs:
+      box-name: ${{ steps.box-info.outputs.box-name }}
+      box-version: ${{ steps.box-info.outputs.box-version }}
+    
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+      
+      - name: Free up disk space
+        run: |
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /usr/local/lib/android
+          sudo rm -rf /opt/ghc
+          sudo rm -rf /opt/hostedtoolcache/CodeQL
+          sudo docker image prune --all --force
+          df -h
+      
+      - name: Install QEMU/KVM
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y qemu-kvm qemu-utils libvirt-daemon-system libvirt-clients bridge-utils virt-manager
+          sudo systemctl enable libvirtd
+          sudo systemctl start libvirtd
+          sudo usermod -aG kvm,libvirt $USER
+          # Verify KVM is available
+          ls -la /dev/kvm
+          sudo kvm-ok || true
+      
+      - name: Install Packer and Vagrant
+        run: |
+          # Install Packer
+          wget -O packer.zip https://releases.hashicorp.com/packer/${PACKER_VERSION}/packer_${PACKER_VERSION}_linux_amd64.zip
+          unzip packer.zip
+          sudo mv packer /usr/local/bin/
+          packer version
+          
+          # Install Vagrant
+          wget -O- https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
+          echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
+          sudo apt update && sudo apt install vagrant
+          vagrant version
+      
+      - name: Set box information
+        id: box-info
+        run: |
+          # Generate version based on date and commit
+          VERSION=$(date +%Y.%m.%d)
+          if [ "${{ github.event_name }}" = "push" ] && [ "${{ github.ref }}" = "refs/heads/main" ]; then
+            VERSION="${VERSION}.${GITHUB_RUN_NUMBER}"
+          elif [ "${{ github.event_name }}" = "pull_request" ]; then
+            VERSION="${VERSION}-pr${{ github.event.number }}"
+          fi
+          
+          BOX_NAME="${{ env.VAGRANT_CLOUD_ORG }}/${{ matrix.distribution }}-${{ matrix.version }}-${{ matrix.architecture }}"
+          
+          echo "box-name=$BOX_NAME" >> $GITHUB_OUTPUT
+          echo "box-version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Box: $BOX_NAME"
+          echo "Version: $VERSION"
+      
+      - name: Validate Packer Templates
+        run: |
+          packer validate \
+            -var-file=distributions/${{ matrix.distribution }}/variables/common.pkrvars.hcl \
+            -var-file=distributions/${{ matrix.distribution }}/variables/arch-${{ matrix.architecture }}.pkrvars.hcl \
+            -var-file=distributions/${{ matrix.distribution }}/variables/${{ matrix.distribution }}-${{ matrix.version }}.pkrvars.hcl \
+            distributions/${{ matrix.distribution }}/common/${{ matrix.distribution }}.pkr.hcl
+      
+      - name: Build Vagrant Box - ${{ matrix.target }}
+        run: |
+          # Enable KVM for current user session
+          sudo chmod 666 /dev/kvm
+          
+          # Build using make target
+          make ${{ matrix.target }}
+        timeout-minutes: 120  # 2 hours timeout per build
+      
+      - name: List build artifacts
+        run: |
+          find output/ -name "*.box" -o -name "*.qcow2" | head -20
+          du -sh output/* || true
+      
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: vagrant-box-${{ matrix.target }}
+          path: |
+            output/${{ matrix.distribution }}-${{ matrix.version }}-${{ matrix.architecture }}/*.box
+            output/${{ matrix.distribution }}-${{ matrix.version }}-${{ matrix.architecture }}/*.qcow2
+          retention-days: 30
+          compression-level: 1  # Minimal compression since boxes are already compressed
+      
+      - name: Publish to Vagrant Cloud
+        if: |
+          success() && (
+            (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
+            (github.event_name == 'schedule') ||
+            (github.event_name == 'workflow_dispatch' && github.event.inputs.publish_to_cloud == 'true')
+          )
+        env:
+          VAGRANT_CLOUD_TOKEN: ${{ secrets.VAGRANT_CLOUD_TOKEN }}
+        run: |
+          BOX_FILE=$(find output/${{ matrix.distribution }}-${{ matrix.version }}-${{ matrix.architecture }} -name "*.box" | head -1)
+          
+          if [ -z "$BOX_FILE" ]; then
+            echo "No .box file found!"
+            exit 1
+          fi
+          
+          echo "Publishing box: ${{ steps.box-info.outputs.box-name }}"
+          echo "Version: ${{ steps.box-info.outputs.box-version }}"
+          echo "File: $BOX_FILE"
+          
+          # Create or update box
+          vagrant cloud box show ${{ steps.box-info.outputs.box-name }} || \
+          vagrant cloud box create ${{ steps.box-info.outputs.box-name }} \
+            --description "${{ matrix.distribution }} ${{ matrix.version }} (${{ matrix.architecture }}) - Built with Packer and QEMU/KVM" \
+            --short-description "${{ matrix.distribution }} ${{ matrix.version }} for ${{ matrix.architecture }}" \
+            --private=false
+          
+          # Create version
+          vagrant cloud version create ${{ steps.box-info.outputs.box-name }} ${{ steps.box-info.outputs.box-version }} \
+            --description "Built on $(date -u '+%Y-%m-%d %H:%M:%S UTC') from commit ${{ github.sha }}"
+          
+          # Create provider and upload
+          vagrant cloud provider create ${{ steps.box-info.outputs.box-name }} libvirt ${{ steps.box-info.outputs.box-version }}
+          
+          vagrant cloud provider upload ${{ steps.box-info.outputs.box-name }} libvirt ${{ steps.box-info.outputs.box-version }} "$BOX_FILE"
+          
+          # Release the version
+          vagrant cloud version release ${{ steps.box-info.outputs.box-name }} ${{ steps.box-info.outputs.box-version }}
+          
+          echo "✅ Successfully published to Vagrant Cloud!"
+          echo "📦 Box URL: https://app.vagrantup.com/boxes/${{ steps.box-info.outputs.box-name }}"
+      
+      - name: Cleanup build artifacts
+        if: always()
+        run: |
+          sudo rm -rf output/${{ matrix.distribution }}-${{ matrix.version }}-${{ matrix.architecture }}
+
+  # Release job - only on tags
+  release:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: [build-matrix, build]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: ./artifacts
+      
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            artifacts/**/*.box
+            artifacts/**/*.qcow2
+          generate_release_notes: true
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }
