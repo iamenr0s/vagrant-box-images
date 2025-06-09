@@ -151,6 +151,11 @@ jobs:
           sudo apt update && sudo apt install vagrant
           vagrant version
       
+      - name: Initialize Packer Plugins
+        run: |
+          # Initialize plugins for the specific template
+          packer init distributions/${{ matrix.distribution }}/common/${{ matrix.distribution }}.pkr.hcl
+      
       - name: Set box information
         id: box-info
         run: |
