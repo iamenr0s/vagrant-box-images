@@ -251,12 +251,7 @@ build {
     version = "${var.box_version}"
     architecture = "${var.architecture}"
     version_description = "Built on {{ timestamp }}"
+    // HCP credentials will be read from environment variables HCP_CLIENT_ID and HCP_CLIENT_SECRET
   }
-    version = "${var.box_version}"
-    architecture = "${var.architecture}"
-    version_description = "Built on {{ timestamp }} from commit ${var.git_commit}"
-    client_id = "${var.hcp_client_id}"
-    client_secret = "${var.hcp_client_secret}"
-  }  
 }
 
