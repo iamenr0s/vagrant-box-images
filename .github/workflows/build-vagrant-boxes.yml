@@ -130,12 +130,17 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y qemu-kvm qemu-utils libvirt-daemon-system libvirt-clients bridge-utils virt-manager
+          # Install QEMU system emulators for different architectures
+          sudo apt-get install -y qemu-system-x86 qemu-system-arm qemu-system-aarch64
           sudo systemctl enable libvirtd
           sudo systemctl start libvirtd
           sudo usermod -aG kvm,libvirt $USER
           # Verify KVM is available
           ls -la /dev/kvm
           sudo kvm-ok || true
+          # Verify QEMU emulators are installed
+          which qemu-system-x86_64
+          which qemu-system-aarch64
       
       - name: Install Packer and Vagrant
         run: |
@@ -153,8 +158,15 @@ jobs:
       
       - name: Initialize Packer Plugins
         run: |
-          # Initialize plugins for the specific template
+          # Initialize Packer plugins
           packer init distributions/${{ matrix.distribution }}/common/${{ matrix.distribution }}.pkr.hcl
+      
+          # Build command
+          packer build \
+            -var-file=distributions/${{ matrix.distribution }}/variables/common.pkrvars.hcl \
+            -var-file=distributions/${{ matrix.distribution }}/variables/arch-${{ matrix.architecture }}.pkrvars.hcl \
+            -var-file=distributions/${{ matrix.distribution }}/variables/${{ matrix.distribution }}-${{ matrix.version }}.pkrvars.hcl \
+            distributions/${{ matrix.distribution }}/common/${{ matrix.distribution }}.pkr.hcl
       
       - name: Set box information
         id: box-info
@@ -187,13 +199,26 @@ jobs:
           # Enable KVM for current user session
           sudo chmod 666 /dev/kvm
           
-          # Build using make target
-          make ${{ matrix.target }}
+          # Create the full output directory structure as defined in HCL
+          mkdir -p "output/${{ matrix.distribution }}-${{ matrix.version }}-${{ matrix.architecture }}"
+          
+          # Build using make target with verbose output
+          make ${{ matrix.target }} || {
+            echo "Build failed. Checking for any partial output..."
+            find . -name "*.box" -o -name "*.qcow2" | head -10
+            ls -la output/ || echo "No output directory created"
+            ls -la "output/${{ matrix.distribution }}-${{ matrix.version }}-${{ matrix.architecture }}/" || echo "No specific output directory created"
+            exit 1
+          }
         timeout-minutes: 120  # 2 hours timeout per build
       
       - name: List build artifacts
+        if: always()
         run: |
-          find output/ -name "*.box" -o -name "*.qcow2" | head -20
+          echo "Checking output directory structure:"
+          ls -la output/ || echo "No output directory found"
+          find output/ -name "*.box" -o -name "*.qcow2" | head -20 || echo "No box files found"
+          du -sh output/* 2>/dev/null || echo "No output files to measure"
           du -sh output/* || true
       
       - name: Upload Build Artifacts

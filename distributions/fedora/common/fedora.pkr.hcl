@@ -1,4 +1,3 @@
-// Fedora Packer template for all versions
 packer {
   required_plugins {
     qemu = {
