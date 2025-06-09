@@ -203,6 +203,6 @@ build {
   // Create Vagrant box
   post-processor "vagrant" {
     compression_level = 9
-    output            = "${var.output_directory}/${var.distribution}-${var.version}-${var.architecture}.box"
+    output = "${var.output_directory}/${var.distribution}-${var.version}-${var.architecture}/${var.distribution}-${var.version}-${var.architecture}.box"
   }
 }

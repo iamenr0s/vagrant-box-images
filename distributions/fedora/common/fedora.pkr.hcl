@@ -217,20 +217,6 @@ build {
   // Create Vagrant box
   post-processor "vagrant" {
     compression_level = 9
-    output            = "${var.output_directory}/${var.distribution}-${var.version}-${var.architecture}.box"
-  }
-
-  // Add this to your existing build block
-  post-processor "vagrant" {
     output = "${var.output_directory}/${var.distribution}-${var.version}-${var.architecture}/${var.distribution}-${var.version}-${var.architecture}.box"
-    vagrantfile_template = "Vagrantfile.template"
-  }
-  
-  post-processor "vagrant-cloud" {
-    box_tag = "${var.vagrant_cloud_org}/${var.distribution}-${var.version}-${var.architecture}"
-    version = "${var.box_version}"
-    version_description = "${var.distribution} ${var.version} (${var.architecture}) - Built with Packer"
-    access_token = "${var.vagrant_cloud_token}"
-    no_release = false
   }
 }
