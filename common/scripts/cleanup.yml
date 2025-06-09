@@ -1,0 +1,33 @@
+---
+- name: Cleanup System
+  hosts: all
+  become: yes
+  tasks:
+    - name: Clean up package cache on Fedora
+      command: dnf clean all
+      when: ansible_distribution == "Fedora"
+
+    - name: Clean up package cache on Debian/Ubuntu
+      apt:
+        autoremove: yes
+        clean: yes
+      when: ansible_os_family == "Debian"
+
+    - name: Clean up package cache on RHEL/CentOS/AlmaLinux
+      command: dnf clean all
+      when: ansible_os_family == "RedHat" and ansible_distribution != "Fedora"
+
+    - name: Remove temporary files
+      file:
+        path: /tmp/*
+        state: absent
+      ignore_errors: yes
+
+    - name: Zero out free space and remove zero file
+      shell: |
+        dd if=/dev/zero of=/EMPTY bs=1M || echo "dd exit code $? is suppressed"
+        rm -f /EMPTY
+      ignore_errors: yes
+
+    - name: Sync to ensure all writes are flushed to disk
+      command: sync

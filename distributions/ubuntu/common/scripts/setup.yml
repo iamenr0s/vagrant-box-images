@@ -1,0 +1,63 @@
+---
+- name: Setup Ubuntu for Vagrant
+  hosts: all
+  become: yes
+  tasks:
+    - name: Update package cache
+      apt:
+        update_cache: yes
+        cache_valid_time: 3600
+
+    - name: Install additional packages for Ubuntu
+      apt:
+        name:
+          - vim
+          - wget
+          - curl
+          - git
+          - bash-completion
+          - cloud-init
+          - cloud-guest-utils
+          - qemu-guest-agent
+          - python3
+          - python3-pip
+        state: present
+
+    - name: Check if running in QEMU/KVM
+      shell: dmidecode -s system-product-name 2>/dev/null || echo "unknown"
+      register: system_type
+      changed_when: false
+      failed_when: false
+
+    - name: Enable qemu-guest-agent service (only in virtualized environment)
+      systemd:
+        name: qemu-guest-agent
+        enabled: yes
+        state: started
+      when: "'QEMU' in system_type.stdout or 'KVM' in system_type.stdout"
+      ignore_errors: yes
+
+    - name: Configure cloud-init for Vagrant
+      copy:
+        dest: /etc/cloud/cloud.cfg.d/90_vagrant.cfg
+        content: |
+          datasource_list: [ NoCloud, ConfigDrive, None ]
+        mode: '0644'
+
+    - name: Disable cloud-init network configuration
+      copy:
+        dest: /etc/cloud/cloud.cfg.d/99-disable-network-config.cfg
+        content: |
+          network: {config: disabled}
+        mode: '0644'
+
+    - name: Configure GRUB for consistent network device naming
+      lineinfile:
+        path: /etc/default/grub
+        regexp: '^GRUB_CMDLINE_LINUX='
+        line: 'GRUB_CMDLINE_LINUX="net.ifnames=0 biosdevname=0"'
+      notify: update grub
+
+  handlers:
+    - name: update grub
+      command: update-grub
