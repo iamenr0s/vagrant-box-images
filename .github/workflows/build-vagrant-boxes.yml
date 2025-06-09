@@ -48,7 +48,7 @@ on:
 
 env:
   PACKER_VERSION: "1.10.0"
-  VAGRANT_CLOUD_ORG: "your-org-name"  # Change this to your Vagrant Cloud organization
+  VAGRANT_CLOUD_ORG: "iamenr0s"
 
 jobs:
   # Matrix strategy to build different combinations
@@ -232,7 +232,7 @@ jobs:
           retention-days: 30
           compression-level: 1  # Minimal compression since boxes are already compressed
       
-      - name: Publish to Vagrant Cloud
+      - name: Publish to HCP Vagrant Registry
         if: |
           success() && (
             (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
@@ -240,40 +240,12 @@ jobs:
             (github.event_name == 'workflow_dispatch' && github.event.inputs.publish_to_cloud == 'true')
           )
         env:
-          VAGRANT_CLOUD_TOKEN: ${{ secrets.VAGRANT_CLOUD_TOKEN }}
+          HCP_CLIENT_ID: ${{ secrets.HCP_CLIENT_ID }}
+          HCP_CLIENT_SECRET: ${{ secrets.HCP_CLIENT_SECRET }}
         run: |
-          BOX_FILE=$(find output/${{ matrix.distribution }}-${{ matrix.version }}-${{ matrix.architecture }} -name "*.box" | head -1)
-          
-          if [ -z "$BOX_FILE" ]; then
-            echo "No .box file found!"
-            exit 1
-          fi
-          
-          echo "Publishing box: ${{ steps.box-info.outputs.box-name }}"
-          echo "Version: ${{ steps.box-info.outputs.box-version }}"
-          echo "File: $BOX_FILE"
-          
-          # Create or update box
-          vagrant cloud box show ${{ steps.box-info.outputs.box-name }} || \
-          vagrant cloud box create ${{ steps.box-info.outputs.box-name }} \
-            --description "${{ matrix.distribution }} ${{ matrix.version }} (${{ matrix.architecture }}) - Built with Packer and QEMU/KVM" \
-            --short-description "${{ matrix.distribution }} ${{ matrix.version }} for ${{ matrix.architecture }}" \
-            --private=false
-          
-          # Create version
-          vagrant cloud version create ${{ steps.box-info.outputs.box-name }} ${{ steps.box-info.outputs.box-version }} \
-            --description "Built on $(date -u '+%Y-%m-%d %H:%M:%S UTC') from commit ${{ github.sha }}"
-          
-          # Create provider and upload
-          vagrant cloud provider create ${{ steps.box-info.outputs.box-name }} libvirt ${{ steps.box-info.outputs.box-version }}
-          
-          vagrant cloud provider upload ${{ steps.box-info.outputs.box-name }} libvirt ${{ steps.box-info.outputs.box-version }} "$BOX_FILE"
-          
-          # Release the version
-          vagrant cloud version release ${{ steps.box-info.outputs.box-name }} ${{ steps.box-info.outputs.box-version }}
-          
-          echo "✅ Successfully published to Vagrant Cloud!"
-          echo "📦 Box URL: https://app.vagrantup.com/boxes/${{ steps.box-info.outputs.box-name }}"
+          echo "Publishing will be handled by Packer's vagrant-registry post-processor"
+          echo "✅ Box will be automatically published to HCP Vagrant Registry during build"
+          echo "📦 Box will be available at: https://portal.cloud.hashicorp.com/vagrant/discover"
       
       - name: Cleanup build artifacts
         if: always()
