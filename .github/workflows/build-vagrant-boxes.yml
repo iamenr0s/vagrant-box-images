@@ -92,7 +92,7 @@ jobs:
                 fi
                 
                 target="${dist}-${version}-${arch}"
-                matrix=$(echo "$matrix" | jq --argjson obj "{\"target\": \"$target\", \"distribution\": \"$dist\", \"version\": \"$version\", \"architecture\": \"$arch\"}" '. + [$obj]')
+                matrix=$(echo "$matrix" | jq --compact-output --argjson obj "{\"target\": \"$target\", \"distribution\": \"$dist\", \"version\": \"$version\", \"architecture\": \"$arch\"}" '. + [$obj]')
               done                
             done
           done
