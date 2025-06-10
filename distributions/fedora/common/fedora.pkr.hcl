@@ -270,7 +270,7 @@ build {
   // Create Vagrant box and upload to registry in a chain
   post-processors {
     post-processor "vagrant" {
-      output = "${var.output_directory}/${var.distribution}-${var.version}-${var.architecture}.box"
+      output = "${var.output_directory}/${var.distribution}-${var.version}-${var.architecture}/${var.distribution}-${var.version}-${var.architecture}.box"
     }
     
     post-processor "vagrant-registry" {
