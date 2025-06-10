@@ -276,7 +276,7 @@ build {
     post-processor "vagrant-registry" {
       box_tag = "${var.hcp_username}/${var.distribution}-${var.version}-${var.architecture}"
       version = "${var.box_version}"
-      architecture = "${var.architecture}"
+      architecture = var.architecture == "x86_64" ? "amd64" : var.architecture
       version_description = "Built on {{ timestamp }}"
       client_id = var.hcp_client_id
       client_secret = var.hcp_client_secret
