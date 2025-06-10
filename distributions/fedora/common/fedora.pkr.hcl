@@ -267,18 +267,20 @@ build {
     extra_arguments = ["-b", "-v"] // Added -v for verbose output
   }
 
-  // Create Vagrant box
-  post-processor "vagrant" {
-    output = "${var.output_directory}/${var.distribution}-${var.version}-${var.architecture}.box"
-  }
-  
-  post-processor "vagrant-registry" {
-    box_tag = "${var.hcp_username}/${var.distribution}-${var.version}-${var.architecture}"
-    version = "${var.box_version}"
-    architecture = "${var.architecture}"
-    version_description = "Built on {{ timestamp }}"
-    client_id = var.hcp_client_id
-    client_secret = var.hcp_client_secret
+  // Create Vagrant box and upload to registry in a chain
+  post-processors {
+    post-processor "vagrant" {
+      output = "${var.output_directory}/${var.distribution}-${var.version}-${var.architecture}.box"
+    }
+    
+    post-processor "vagrant-registry" {
+      box_tag = "${var.hcp_username}/${var.distribution}-${var.version}-${var.architecture}"
+      version = "${var.box_version}"
+      architecture = "${var.architecture}"
+      version_description = "Built on {{ timestamp }}"
+      client_id = var.hcp_client_id
+      client_secret = var.hcp_client_secret
+    }
   }
 }
 
