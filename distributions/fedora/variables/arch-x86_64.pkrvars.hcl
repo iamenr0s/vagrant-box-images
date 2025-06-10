@@ -1,6 +1,4 @@
-// x86_64 architecture specific variables
-
-architecture = "x86_64"
+architecture = "amd64"
 qemu_binary = "qemu-system-x86_64"
 cpus = "2"
 memory = "2048"
