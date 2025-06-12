@@ -4,7 +4,7 @@ version = "9"
 
 // x86_64 specific
 x86_64_iso_url = "https://download.rockylinux.org/pub/rocky/9/isos/x86_64/Rocky-9-latest-x86_64-minimal.iso"
-x86_64_iso_checksum = "sha256:eedbdc2875c32c7f00e70fc861edef48587c7cbfd106885af80bdf434543820b"
+x86_64_iso_checksum = "sha256:aed9449cf79eb2d1c365f4f2561f923a80451b3e8fdbf595889b4cf0ac6c58b8"
 x86_64_install_url = "https://download.rockylinux.org/pub/rocky/9/BaseOS/x86_64/os/"
 
 // arm64 specific

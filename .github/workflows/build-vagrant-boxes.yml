@@ -64,7 +64,8 @@ jobs:
         id: set-matrix
         run: |
           # Define the full matrix
-          DISTRIBUTIONS=("fedora" "almalinux" "rockylinux" "ubuntu" "debian")
+          #DISTRIBUTIONS=("fedora" "almalinux" "rockylinux" "ubuntu" "debian")
+          DISTRIBUTIONS=("ubuntu" "debian")
           VERSIONS_fedora=("40" "41" "42")
           VERSIONS_almalinux=("8" "9" "10")
           VERSIONS_rockylinux=("8" "9")
