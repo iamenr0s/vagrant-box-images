@@ -68,10 +68,11 @@ jobs:
           VERSIONS_fedora=("40" "41" "42")
           VERSIONS_almalinux=("8" "9" "10")
           VERSIONS_rockylinux=("8" "9")
-          VERSIONS_ubuntu=("20.04" "22.04" "24.04")
+          VERSIONS_ubuntu=("22.04" "24.04")
           VERSIONS_debian=("11" "12")
-          ARCHITECTURES=("x86_64" "arm64")
-          
+          #ARCHITECTURES=("x86_64" "arm64")
+          ARCHITECTURES=("x86_64")
+
           # Filter based on inputs
           DIST_FILTER="${{ github.event.inputs.distribution || 'all' }}"
           ARCH_FILTER="${{ github.event.inputs.architecture || 'all' }}"
