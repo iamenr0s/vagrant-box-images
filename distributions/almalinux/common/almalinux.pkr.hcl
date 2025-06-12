@@ -15,6 +15,44 @@ packer {
     }
   }
 }
+// HCP/Vagrant Registry variables
+variable "hcp_username" {
+  type        = string
+  description = "HCP username or organization name for box publishing"
+  default     = ""
+}
+
+variable "registry_name" {
+  type        = string
+  description = "Name of the registry for box publishing"
+  default     = ""
+}
+
+variable "hcp_client_id" {
+  type        = string
+  description = "HCP client ID for authentication"
+  default     = ""
+  sensitive   = true
+}
+
+variable "hcp_client_secret" {
+  type        = string
+  description = "HCP client secret for authentication"
+  default     = ""
+  sensitive   = true
+}
+
+variable "box_name" {
+  type        = string
+  description = "Name of the Vagrant box"
+  default     = ""
+}
+
+variable "box_version" {
+  type        = string
+  description = "Version number for the Vagrant box"
+  default     = "1.0.0"
+}
 
 // Distribution variables
 variable "distribution" {
