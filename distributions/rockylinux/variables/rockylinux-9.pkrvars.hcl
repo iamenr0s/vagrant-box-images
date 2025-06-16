@@ -9,6 +9,6 @@ x86_64_install_url = "https://download.rockylinux.org/pub/rocky/9/BaseOS/x86_64/
 
 // arm64 specific
 arm64_iso_url = "https://download.rockylinux.org/pub/rocky/9/isos/aarch64/Rocky-9-latest-aarch64-minimal.iso"
-arm64_iso_checksum = "sha256:5bd7a6bd90ae54c9f9e4c2e8c957b33fb61fbffcede251fe73f0b0beb42fd9ca"
+arm64_iso_checksum = "sha256:4dbba6104aa1025fae5a540785e905fab7864dad118168e822042583f8020a99"
 arm64_install_url = "https://download.rockylinux.org/pub/rocky/9/BaseOS/aarch64/os/"
 
