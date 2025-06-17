@@ -185,7 +185,7 @@ jobs:
       - name: Validate Packer Templates
         run: |
           # In the build step, add:
-          packer validate \
+          PACKER_LOG=1 packer validate \
             -var="registry_name=${{ secrets.HCP_REGISTRY_NAME }}" \
             -var="hcp_client_id=${{ secrets.HCP_CLIENT_ID }}" \
             -var="hcp_client_secret=${{ secrets.HCP_CLIENT_SECRET }}" \
@@ -206,7 +206,7 @@ jobs:
           mkdir -p "output/${{ matrix.distribution }}-${{ matrix.version }}-${{ matrix.architecture }}"
           
           # Build using make target with verbose output
-          packer build -force \
+          PACKER_LOG=1 packer build -force \
             -var="registry_name=${{ secrets.HCP_REGISTRY_NAME }}" \
             -var="hcp_client_id=${{ secrets.HCP_CLIENT_ID }}" \
             -var="hcp_client_secret=${{ secrets.HCP_CLIENT_SECRET }}" \
