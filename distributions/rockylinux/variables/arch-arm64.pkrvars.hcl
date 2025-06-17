@@ -4,15 +4,14 @@ architecture = "arm64"
 qemu_binary = "qemu-system-aarch64"
 cpus = "4"
 memory = "4096"
-#boot_command = ["<wait10>c", "linux /images/pxeboot/vmlinuz inst.ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/ks.cfg console=ttyS0,115200", "<enter><wait2>", "initrd /images/pxeboot/initrd.img", "<enter><wait2>", "boot", "<enter>"]
-#boot_command = ["<up><wait>", "e", "<down><down><down><left>", " console=ttyS0 inst.cmdline inst.text inst.ks=http://{{.HTTPIP}}:{{.HTTPPort}}/ks.cfg <f10>"]
-boot_command = ["<up><wait>", "e<wait>", "<down><down><end><wait>", " inst.text inst.ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/ks.cfg<wait>", "<F10>"]
+boot_command = ["<up><wait>", "e", "<down><down><down><left>", " console=ttyS0 inst.cmdline inst.text inst.ks=http://{{.HTTPIP}}:{{.HTTPPort}}/ks.cfg <f10>"]
 
 qemu_args = [
   ["-m", "2048"],
   ["-smp", "2"],
   ["-machine", "virt"],
   ["-cpu", "cortex-a57"],
-  ["-bios", "/usr/share/qemu-efi-aarch64/QEMU_EFI.fd"],
-  ["-display", "none"]
+  ["-display", "none"],
+  ["-boot", "order=dc"]
+  // Use order=dc instead of once=d for ARM64 compatibility
 ]
