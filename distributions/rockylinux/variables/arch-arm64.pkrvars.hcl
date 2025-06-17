@@ -4,8 +4,8 @@ architecture = "arm64"
 qemu_binary = "qemu-system-aarch64"
 cpus = "4"
 memory = "4096"
-# Try the GRUB-style boot command instead
-boot_command = ["<wait30>", "<tab>", " inst.ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/ks.cfg console=ttyS0 inst.cmdline inst.headless", "<enter>"]
+# GRUB2-style boot command for ARM64 UEFI
+boot_command = ["<wait5>c", "linux /images/pxeboot/vmlinuz inst.ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/ks.cfg console=ttyS0 inst.cmdline inst.headless", "<enter>", "initrd /images/pxeboot/initrd.img", "<enter>", "boot", "<enter>"]
 
 qemu_args = [
   ["-m", "2048"],
