@@ -12,5 +12,6 @@ qemu_args = [
   ["-smp", "2"],
   ["-machine", "virt"],
   ["-cpu", "cortex-a57"],
-  ["-display", "none"]
+  ["-display", "none"],
+  ["-boot", "menu=on"]
 ]
