@@ -222,7 +222,7 @@ jobs:
             ls -la "output/${{ matrix.distribution }}-${{ matrix.version }}-${{ matrix.architecture }}/" || echo "No specific output directory created"
             exit 1
           }
-        timeout-minutes: 120  # 2 hours timeout per build
+        timeout-minutes: 180  # 2 hours timeout per build
       
       - name: List build artifacts
         if: always()
