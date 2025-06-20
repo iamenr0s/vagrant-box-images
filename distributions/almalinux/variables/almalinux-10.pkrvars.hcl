@@ -13,4 +13,4 @@ arm64_iso_checksum = "sha256:6257c3425b634c0cef9016e008627584f7eb96b09d27c521a0c
 arm64_install_url = "https://repo.almalinux.org/almalinux/10/BaseOS/aarch64/os/"
 
 // AlmaLinux 10 specific boot command
-boot_command = ["<up>e", "<down><down><end>", " inst.ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/ks.cfg inst.cmdline inst.headless ip=dhcp", "<leftCtrlOn>x<leftCtrlOff>"]
+// boot_command = ["<up>e", "<down><down><end>", " inst.ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/ks.cfg inst.cmdline inst.headless ip=dhcp", "<leftCtrlOn>x<leftCtrlOff>"]
