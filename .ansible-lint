@@ -1,0 +1,14 @@
+skip_list:
+  - '106'
+  - '503'
+  # package-latest: `state: latest` in common/scripts/update.yml is the
+  # intended behavior of the "Update System" playbook, not an oversight.
+  - package-latest
+  # ignore-errors: guest-agent enablement is best-effort (module may be
+  # absent pre-package-install, or unsupported in a given base image) —
+  # converting to failed_when per-case needs case-by-case verification.
+  - ignore-errors
+  # no-changed-when: cleanup/update commands (dnf clean, update-grub, the
+  # free-space zero-fill) have no meaningful "changed" state to report on
+  # an ephemeral build image.
+  - no-changed-when

@@ -1,15 +1,15 @@
 ---
 - name: Setup Debian for Vagrant
   hosts: all
-  become: yes
+  become: true
   tasks:
     - name: Update package cache
-      apt:
-        update_cache: yes
+      ansible.builtin.apt:
+        update_cache: true
         cache_valid_time: 3600
 
     - name: Install additional packages for Debian
-      apt:
+      ansible.builtin.apt:
         name:
           - vim
           - wget
@@ -24,47 +24,47 @@
         state: present
 
     - name: Check if running in QEMU/KVM
-      shell: dmidecode -s system-product-name 2>/dev/null || echo "unknown"
+      ansible.builtin.shell: dmidecode -s system-product-name 2>/dev/null || echo "unknown"
       register: system_type
       changed_when: false
       failed_when: false
 
     - name: Enable qemu-guest-agent service (only in virtualized environment)
-      systemd:
+      ansible.builtin.systemd:
         name: qemu-guest-agent
-        enabled: yes
+        enabled: true
         state: started
       when: "'QEMU' in system_type.stdout or 'KVM' in system_type.stdout"
-      ignore_errors: yes
+      ignore_errors: true
 
     - name: Configure cloud-init for Vagrant
-      copy:
+      ansible.builtin.copy:
         dest: /etc/cloud/cloud.cfg.d/90_vagrant.cfg
         content: |
           datasource_list: [ NoCloud, ConfigDrive, None ]
-        mode: '0644'
+        mode: "0644"
 
     - name: Disable cloud-init network configuration
-      copy:
+      ansible.builtin.copy:
         dest: /etc/cloud/cloud.cfg.d/99-disable-network-config.cfg
         content: |
           network: {config: disabled}
-        mode: '0644'
+        mode: "0644"
 
     - name: Check if GRUB config exists
-      stat:
+      ansible.builtin.stat:
         path: /etc/default/grub
       register: grub_config
 
     - name: Configure GRUB for consistent network device naming
-      lineinfile:
+      ansible.builtin.lineinfile:
         path: /etc/default/grub
-        regexp: '^GRUB_CMDLINE_LINUX='
+        regexp: "^GRUB_CMDLINE_LINUX="
         line: 'GRUB_CMDLINE_LINUX="net.ifnames=0 biosdevname=0"'
-      notify: update grub
+      notify: Update grub
       when: grub_config.stat.exists
 
   handlers:
-    - name: update grub
-      command: update-grub
+    - name: Update grub
+      ansible.builtin.command: update-grub
       when: grub_config.stat.exists

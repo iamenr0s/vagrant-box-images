@@ -1,0 +1,89 @@
+name: Lint
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  yaml-ansible:
+    name: yamllint / ansible-lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install lint tools
+        run: pip3 install yamllint ansible-lint
+
+      - name: yamllint
+        run: yamllint .
+
+      - name: ansible-lint
+        run: ansible-lint
+
+  packer-validate:
+    name: packer validate
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { distribution: fedora, version: "40", architecture: x86_64 }
+          - { distribution: fedora, version: "40", architecture: arm64 }
+          - { distribution: fedora, version: "41", architecture: x86_64 }
+          - { distribution: fedora, version: "41", architecture: arm64 }
+          - { distribution: fedora, version: "42", architecture: x86_64 }
+          - { distribution: fedora, version: "42", architecture: arm64 }
+          - { distribution: almalinux, version: "8", architecture: x86_64 }
+          - { distribution: almalinux, version: "8", architecture: arm64 }
+          - { distribution: almalinux, version: "9", architecture: x86_64 }
+          - { distribution: almalinux, version: "9", architecture: arm64 }
+          - { distribution: almalinux, version: "10", architecture: x86_64 }
+          - { distribution: almalinux, version: "10", architecture: arm64 }
+          - { distribution: rockylinux, version: "8", architecture: x86_64 }
+          - { distribution: rockylinux, version: "8", architecture: arm64 }
+          - { distribution: rockylinux, version: "9", architecture: x86_64 }
+          - { distribution: rockylinux, version: "9", architecture: arm64 }
+          - { distribution: ubuntu, version: "22.04", architecture: x86_64 }
+          - { distribution: ubuntu, version: "22.04", architecture: arm64 }
+          - { distribution: ubuntu, version: "24.04", architecture: x86_64 }
+          - { distribution: ubuntu, version: "24.04", architecture: arm64 }
+          - { distribution: debian, version: "11", architecture: x86_64 }
+          - { distribution: debian, version: "11", architecture: arm64 }
+          - { distribution: debian, version: "12", architecture: x86_64 }
+          - { distribution: debian, version: "12", architecture: arm64 }
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Install Packer
+        run: |
+          wget -O packer.zip https://releases.hashicorp.com/packer/1.10.0/packer_1.10.0_linux_amd64.zip
+          unzip packer.zip
+          sudo mv packer /usr/local/bin/
+          packer version
+
+      - name: Initialize Packer Plugins
+        run: packer init distributions/${{ matrix.distribution }}/common/${{ matrix.distribution }}.pkr.hcl
+
+      - name: packer validate - ${{ matrix.distribution }}-${{ matrix.version }}-${{ matrix.architecture }}
+        run: |
+          packer validate \
+            -var="box_name=${{ matrix.distribution }}-${{ matrix.version }}-${{ matrix.architecture }}" \
+            -var="box_version=0.0.0" \
+            -var="hcp_client_id=validate-only" \
+            -var="hcp_client_secret=validate-only" \
+            -var-file=distributions/${{ matrix.distribution }}/variables/common.pkrvars.hcl \
+            -var-file=distributions/${{ matrix.distribution }}/variables/arch-${{ matrix.architecture }}.pkrvars.hcl \
+            -var-file=distributions/${{ matrix.distribution }}/variables/${{ matrix.distribution }}-${{ matrix.version }}.pkrvars.hcl \
+            distributions/${{ matrix.distribution }}/common/${{ matrix.distribution }}.pkr.hcl
