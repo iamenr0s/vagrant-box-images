@@ -81,6 +81,8 @@ jobs:
           packer validate \
             -var="box_name=${{ matrix.distribution }}-${{ matrix.version }}-${{ matrix.architecture }}" \
             -var="box_version=0.0.0" \
+            -var="hcp_client_id=validate-only" \
+            -var="hcp_client_secret=validate-only" \
             -var-file=distributions/${{ matrix.distribution }}/variables/common.pkrvars.hcl \
             -var-file=distributions/${{ matrix.distribution }}/variables/arch-${{ matrix.architecture }}.pkrvars.hcl \
             -var-file=distributions/${{ matrix.distribution }}/variables/${{ matrix.distribution }}-${{ matrix.version }}.pkrvars.hcl \
