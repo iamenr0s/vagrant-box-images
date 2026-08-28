@@ -34,6 +34,11 @@ jobs:
   packer-validate:
     name: packer validate
     runs-on: ubuntu-latest
+    env:
+      # Unauthenticated plugin-getter requests are capped at 60/hr; 24
+      # parallel `packer init` calls fetching 3 plugins each blow past
+      # that easily. The auto-provided GITHUB_TOKEN raises the limit.
+      PACKER_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     strategy:
       fail-fast: false
       matrix:
