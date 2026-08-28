@@ -50,6 +50,9 @@ env:
   PACKER_VERSION: "1.10.0"
   VAGRANT_CLOUD_ORG: "iamenr0s"
 
+permissions:
+  contents: read
+
 jobs:
   # Matrix strategy to build different combinations
   build-matrix:
@@ -269,6 +272,8 @@ jobs:
     if: startsWith(github.ref, 'refs/tags/v')
     needs: [build-matrix, build]
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Download all artifacts
         uses: actions/download-artifact@v4
