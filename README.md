@@ -4,9 +4,11 @@ This repository contains Packer templates to build Vagrant box images for variou
 
 ## Supported Distributions
 
-- Fedora 40 (x86_64, arm64)
-- Ubuntu (planned)
-- AlmaLinux (planned)
+- Fedora 40, 41, 42 (x86_64, arm64)
+- AlmaLinux 8, 9, 10 (x86_64, arm64)
+- Rocky Linux 8, 9 (x86_64, arm64)
+- Debian 11, 12 (x86_64, arm64)
+- Ubuntu 22.04, 24.04 (x86_64, arm64)
 
 ## Requirements
 
@@ -16,16 +18,28 @@ This repository contains Packer templates to build Vagrant box images for variou
 
 ## Directory Structure
 
-- `common/`: Common scripts and configurations shared across distributions
-- `distributions/`: Distribution-specific configurations and scripts
-- `packer/`: Common Packer configuration files
+- `common/`: Common Ansible playbooks shared across all distributions (system update, Vagrant setup, cleanup)
+- `distributions/`: Per-distribution Packer templates, variables, HTTP/install configs, and setup playbooks
 
 ## Building Images
 
-### Building Fedora 39 for x86_64
+```bash
+make fedora-42-x86_64        # any <distro>-<version>-<arch> target (see Makefile)
+make all                     # build every distro/version/arch combination
+```
+
+Or invoke Packer directly for a single target:
 
 ```bash
-cd vagrant-box-images
-packer build -var-file=distributions/fedora/fedora40/x86_64/variables.pkrvars.hcl distributions/fedora/fedora40/fedora40.pkr.hcl
+packer init distributions/fedora/common/fedora.pkr.hcl
+packer build \
+  -var-file=distributions/fedora/variables/common.pkrvars.hcl \
+  -var-file=distributions/fedora/variables/arch-x86_64.pkrvars.hcl \
+  -var-file=distributions/fedora/variables/fedora-42.pkrvars.hcl \
+  distributions/fedora/common/fedora.pkr.hcl
 ```
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md). This project follows the [Code of Conduct](CODE_OF_CONDUCT.md); report vulnerabilities per [SECURITY.md](SECURITY.md).
 

@@ -1,10 +1,10 @@
 ---
 - name: Setup RockyLinux for Vagrant
   hosts: all
-  become: yes
+  become: true
   tasks:
     - name: Install additional packages for RockyLinux
-      dnf:
+      ansible.builtin.dnf:
         name:
           - vim
           - wget
@@ -18,26 +18,26 @@
         state: present
 
     - name: Enable NetworkManager service
-      systemd:
+      ansible.builtin.systemd:
         name: NetworkManager
-        enabled: yes
+        enabled: true
 
     - name: Enable qemu-guest-agent service
-      systemd:
+      ansible.builtin.systemd:
         name: qemu-guest-agent
-        enabled: yes
+        enabled: true
 
     - name: Configure cloud-init for Vagrant
-      copy:
+      ansible.builtin.copy:
         dest: /etc/cloud/cloud.cfg.d/90_vagrant.cfg
         content: |
           datasource_list: [ NoCloud, ConfigDrive, None ]
-        mode: '0644'
+        mode: "0644"
 
     - name: Disable NetworkManager's DNS management
-      copy:
+      ansible.builtin.copy:
         dest: /etc/NetworkManager/conf.d/90-dns-none.conf
         content: |
           [main]
           dns=none
-        mode: '0644'
+        mode: "0644"
