@@ -225,7 +225,7 @@ jobs:
             ls -la "output/${{ matrix.distribution }}-${{ matrix.version }}-${{ matrix.architecture }}/" || echo "No specific output directory created"
             exit 1
           }
-        timeout-minutes: 180  # 2 hours timeout per build
+        timeout-minutes: 355  # arm64 runs under TCG (no KVM): install alone takes ~80 min
       
       - name: List build artifacts
         if: always()
