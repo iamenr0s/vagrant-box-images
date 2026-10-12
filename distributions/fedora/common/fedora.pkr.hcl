@@ -218,6 +218,14 @@ source "qemu" "fedora" {
   qemu_binary       = var.qemu_binary
   headless          = var.headless
   qemuargs          = var.qemu_args
+  // Anaconda auto-loads ks.cfg from a volume labelled OEMDRV, so no GRUB keystrokes are needed
+  cd_label = "OEMDRV"
+  cd_content = {
+    "ks.cfg" = templatefile("http/ks.cfg.pkrtpl.hcl", {
+      install_url = local.actual_install_url
+      version     = var.version
+    })
+  }
   http_content = {
     "/ks.cfg" = templatefile("http/ks.cfg.pkrtpl.hcl", {
       install_url = local.actual_install_url
