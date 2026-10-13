@@ -74,10 +74,9 @@ jobs:
           VERSIONS_rockylinux=("8" "9")
           VERSIONS_ubuntu=("22.04" "24.04")
           VERSIONS_debian=("11" "12")
-          # arm64 runs under TCG (hours per build): PRs build only the newest Fedora, full set on push/cron/dispatch
-          if [[ "${{ github.event_name }}" == "pull_request" ]]; then VERSIONS_fedora=("42"); fi
+          # arm64 disabled until a self-hosted KVM runner exists (TCG builds exceed the 6h cap)
           #ARCHITECTURES=("x86_64" "arm64")
-          ARCHITECTURES=("arm64")
+          ARCHITECTURES=("x86_64")
 
           # Filter based on inputs
           DIST_FILTER="${{ github.event.inputs.distribution || 'all' }}"
