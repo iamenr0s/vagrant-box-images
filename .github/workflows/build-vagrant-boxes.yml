@@ -74,6 +74,8 @@ jobs:
           VERSIONS_rockylinux=("8" "9")
           VERSIONS_ubuntu=("22.04" "24.04")
           VERSIONS_debian=("11" "12")
+          # arm64 runs under TCG (hours per build): PRs build only the newest Fedora, full set on push/cron/dispatch
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then VERSIONS_fedora=("42"); fi
           #ARCHITECTURES=("x86_64" "arm64")
           ARCHITECTURES=("arm64")
 
