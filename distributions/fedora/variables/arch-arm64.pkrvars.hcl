@@ -12,10 +12,10 @@ qemu_args = [
   ["-serial", "stdio"],
   ["-bios", "/usr/share/qemu-efi-aarch64/QEMU_EFI.fd"],
   ["-boot", "menu=on"],
-  ["-machine", "type=virt,accel=kvm:tcg"],
+  ["-machine", "type=virt"],
   ["-device", "qemu-xhci"],
   ["-device", "usb-kbd"],
   ["-device", "usb-mouse"],
-  ["-cpu", "max"],
+  ["-cpu", "cortex-a57"],
   ["-display", "none"]
 ]

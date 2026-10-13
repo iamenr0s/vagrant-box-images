@@ -109,8 +109,7 @@ jobs:
 
   build:
     needs: build-matrix
-    # arm64 guests build on a native arm runner so QEMU can use KVM instead of TCG
-    runs-on: ${{ matrix.architecture == 'arm64' && 'ubuntu-24.04-arm' || 'ubuntu-latest' }}
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       max-parallel: 3  # Limit concurrent builds to avoid resource exhaustion
@@ -153,7 +152,7 @@ jobs:
       - name: Install Packer and Vagrant
         run: |
           # Install Packer
-          wget -O packer.zip https://releases.hashicorp.com/packer/${PACKER_VERSION}/packer_${PACKER_VERSION}_linux_$(dpkg --print-architecture).zip
+          wget -O packer.zip https://releases.hashicorp.com/packer/${PACKER_VERSION}/packer_${PACKER_VERSION}_linux_amd64.zip
           unzip packer.zip
           sudo mv packer /usr/local/bin/
           packer version
@@ -206,7 +205,6 @@ jobs:
       - name: Build Vagrant Box - ${{ matrix.target }}
         run: |
           # Enable KVM for current user session
-          ls -la /dev/kvm
           sudo chmod 666 /dev/kvm
           
           # Create the full output directory structure as defined in HCL
