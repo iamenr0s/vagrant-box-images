@@ -5,3 +5,7 @@ output/
 # Ignore temporary files
 *.log
 *.tmp
+
+# graphify / codegraph
+graphify-out/
+.codegraph/

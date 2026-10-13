@@ -4,7 +4,7 @@ architecture = "arm64"
 qemu_binary = "qemu-system-aarch64"
 cpus = "4"
 memory = "4096"
-boot_command = ["<up>e", "<down><down><end>", " inst.ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/ks.cfg", "<leftCtrlOn>x<leftCtrlOff>"]
+boot_command = []
 
 qemu_args = [
   ["-m", "4096"],

@@ -74,8 +74,9 @@ jobs:
           VERSIONS_rockylinux=("8" "9")
           VERSIONS_ubuntu=("22.04" "24.04")
           VERSIONS_debian=("11" "12")
+          # arm64 disabled until a self-hosted KVM runner exists (TCG builds exceed the 6h cap)
           #ARCHITECTURES=("x86_64" "arm64")
-          ARCHITECTURES=("arm64")
+          ARCHITECTURES=("x86_64")
 
           # Filter based on inputs
           DIST_FILTER="${{ github.event.inputs.distribution || 'all' }}"
@@ -134,7 +135,7 @@ jobs:
       - name: Install QEMU/KVM
         run: |
           sudo apt-get update
-          sudo apt-get install -y qemu-kvm qemu-utils libvirt-daemon-system libvirt-clients bridge-utils virt-manager
+          sudo apt-get install -y qemu-kvm qemu-utils libvirt-daemon-system libvirt-clients bridge-utils virt-manager xorriso
           # Install QEMU system emulators for different architectures
           sudo apt-get install -y qemu-system-x86 qemu-system-arm qemu-system-aarch64
           sudo systemctl enable libvirtd
@@ -209,7 +210,14 @@ jobs:
           mkdir -p "output/${{ matrix.distribution }}-${{ matrix.version }}-${{ matrix.architecture }}"
           
           # Build using make target with verbose output
-          PACKER_LOG=1 packer build -force \
+          # Only publish to HCP on main pushes, the weekly cron, or an explicit dispatch
+          EXCEPT=""
+          if ! { [ "${{ github.event_name }}" = "push" ] && [ "${{ github.ref }}" = "refs/heads/main" ]; } \
+             && [ "${{ github.event_name }}" != "schedule" ] \
+             && ! { [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ github.event.inputs.publish_to_cloud }}" = "true" ]; }; then
+            EXCEPT="-except=publish"
+          fi
+          PACKER_LOG=1 packer build -force $EXCEPT \
             -var="registry_name=${{ secrets.HCP_REGISTRY_NAME }}" \
             -var="hcp_client_id=${{ secrets.HCP_CLIENT_ID }}" \
             -var="hcp_client_secret=${{ secrets.HCP_CLIENT_SECRET }}" \
@@ -225,7 +233,7 @@ jobs:
             ls -la "output/${{ matrix.distribution }}-${{ matrix.version }}-${{ matrix.architecture }}/" || echo "No specific output directory created"
             exit 1
           }
-        timeout-minutes: 180  # 2 hours timeout per build
+        timeout-minutes: 355  # arm64 runs under TCG (no KVM): install alone takes ~80 min
       
       - name: List build artifacts
         if: always()

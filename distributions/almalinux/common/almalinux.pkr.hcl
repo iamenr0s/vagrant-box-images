@@ -276,6 +276,7 @@ build {
     }
     
     post-processor "vagrant-registry" {
+      name = "publish"
       box_tag = "${var.hcp_username}/${var.distribution}-${var.version}-${var.architecture}"
       version = "${var.box_version}"
       architecture = var.architecture == "x86_64" ? "amd64" : var.architecture
